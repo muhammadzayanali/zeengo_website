@@ -1,5 +1,7 @@
+import { BrandMark } from './BrandMark'
+
 /**
- * Product loader for aLo · ZEEN — branded mark + soft orbit (no plain text spinners).
+ * Product loader for aLo · ZEEN — brand mark + soft orbit (no text "ZN").
  */
 export function ZeenLoader({
   size = 'md',
@@ -12,10 +14,10 @@ export function ZeenLoader({
   className?: string
 }) {
   const dim =
-    size === 'sm' ? 'h-9 w-9' : size === 'lg' ? 'h-16 w-16' : 'h-12 w-12'
+    size === 'sm' ? 'h-10 w-10' : size === 'lg' ? 'h-[4.5rem] w-[4.5rem]' : 'h-14 w-14'
   const ring =
     size === 'sm' ? 'border-[2.5px]' : size === 'lg' ? 'border-[3.5px]' : 'border-[3px]'
-  const mark = size === 'sm' ? 'text-[9px]' : size === 'lg' ? 'text-[13px]' : 'text-[11px]'
+  const markPx = size === 'sm' ? 28 : size === 'lg' ? 48 : 36
 
   return (
     <div
@@ -26,23 +28,16 @@ export function ZeenLoader({
       aria-label={label || 'Loading'}
     >
       <div className={`relative ${dim}`}>
-        {/* Soft breath halo */}
         <span
-          className="absolute inset-0 rounded-full bg-mint/80 animate-zeen-breathe"
+          className="absolute inset-0 rounded-[14px] bg-mint/80 animate-zeen-breathe"
           aria-hidden
         />
-        {/* Orbit ring */}
         <span
-          className={`absolute inset-0 rounded-full border-transparent border-t-emer border-r-fresh/70 ${ring} animate-zeen-spin`}
+          className={`absolute inset-0 rounded-[14px] border-transparent border-t-emer border-r-fresh/70 ${ring} animate-zeen-spin`}
           aria-hidden
         />
-        {/* Brand disc */}
-        <span className="absolute inset-[18%] flex items-center justify-center rounded-full bg-forest shadow-[0_4px_14px_rgba(18,55,42,0.22)]">
-          <span
-            className={`font-bold tracking-[0.14em] text-mint uppercase ${mark}`}
-          >
-            ZN
-          </span>
+        <span className="absolute inset-0 flex items-center justify-center">
+          <BrandMark size={markPx} rounded="lg" className="relative z-[1]" />
         </span>
       </div>
       {label ? (
