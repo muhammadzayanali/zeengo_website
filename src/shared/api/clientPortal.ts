@@ -68,11 +68,16 @@ export type ClientTask = {
 
 export type ClientItinerary = {
   znCode: string
+  bookingId?: string
+  arrivalDate?: string | null
+  departureDate?: string | null
+  packageName?: string | null
   days: Array<{
     dayNumber: number
     planDate?: string | null
     carPlan?: string | null
     notes?: string | null
+    title?: string | null
     activities: ClientActivity[]
   }>
 }

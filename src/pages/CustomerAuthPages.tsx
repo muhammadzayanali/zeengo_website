@@ -187,23 +187,35 @@ function AuthenticatedTrip() {
   }
 
   const home = homeQ.data!
-  const bookingDays: TripDay[] = (itinQ.data?.days ?? []).map((day) => ({
+  const itin = itinQ.data
+  const bookingDays: TripDay[] = (itin?.days ?? []).map((day) => ({
     dayNumber: day.dayNumber,
-    title: day.carPlan || day.notes || `Day ${day.dayNumber}`,
+    title:
+      day.title ||
+      day.carPlan ||
+      day.notes ||
+      (day.planDate ? `Day ${day.dayNumber} · ${day.planDate}` : `Day ${day.dayNumber}`),
     planDate: day.planDate,
     mosqueKm: null,
-    stops: day.activities.map((a) => ({
-      // Never use itinerary activity id as a place id — link vendor when present.
-      id: a.vendorId ?? undefined,
-      title: a.title,
-      subtitle: [a.locationName, a.vendorName, a.startTime]
-        .filter(Boolean)
-        .join(' · '),
-    })),
+    stops:
+      day.activities.length > 0
+        ? day.activities.map((a) => ({
+            id: a.vendorId ?? undefined,
+            title: a.title,
+            subtitle: [a.locationName, a.vendorName, a.vendorType, a.startTime]
+              .filter(Boolean)
+              .join(' · '),
+          }))
+        : [
+            {
+              title: 'ZEEN will publish stops for this day',
+              subtitle: day.notes || day.carPlan || 'Check back after your desk updates Ops',
+            },
+          ],
   }))
 
-  const hasItinerary = bookingDays.some((d) => d.stops.length > 0)
-  const days = hasItinerary ? bookingDays : []
+  const hasStops = (itin?.days ?? []).some((d) => d.activities.length > 0)
+  const days = bookingDays
   const assignStatus = home.assignment?.status ?? null
   const assignLabel = assignmentLabel(assignStatus)
   const hasLiveDriver = Boolean(
@@ -215,8 +227,12 @@ function AuthenticatedTrip() {
 
   return (
     <TripPlanView
-      title="My Moscow trip"
-      subtitle={`${home.clientName}${home.packageName ? ` · ${home.packageName}` : ''}`}
+      title={`${home.znCode} trip`}
+      subtitle={`${home.clientName}${home.packageName ? ` · ${home.packageName}` : ''}${
+        home.arrivalDate && home.departureDate
+          ? ` · ${home.arrivalDate} → ${home.departureDate}`
+          : ''
+      }`}
       days={days}
       showHeart={false}
       showJourney={days.length > 1}
@@ -323,15 +339,15 @@ function AuthenticatedTrip() {
             </div>
           ) : null}
 
-          {!hasItinerary ? (
+          {!hasStops ? (
             <div className="rounded-[16px] border border-bord bg-paper px-4 py-5">
               <p className="text-[11px] font-bold tracking-[0.16em] text-emer uppercase">
                 Days
               </p>
-              <p className="mt-1 text-[20px] font-bold text-graph">Itinerary</p>
+              <p className="mt-1 text-[20px] font-bold text-graph">Your itinerary</p>
               <p className="mt-2 text-[13.5px] leading-relaxed text-sgraph">
-                Your itinerary has not been prepared yet. ZEEN will publish your
-                day-by-day plan for {home.znCode} soon.
+                Your stay dates are live from ZEEN Ops. Day-by-day stops appear
+                here as soon as the desk publishes them for {home.znCode}.
               </p>
             </div>
           ) : (
@@ -383,10 +399,10 @@ function AuthenticatedTrip() {
   )
 }
 
-/** Guest My Trip — client “Your N days / 3-day plan” prototype. */
+/** Guest My Trip — ZN login first; optional sample discovery preview. */
 function GuestTripTemplate() {
   const navigate = useNavigate()
-  const [showZn, setShowZn] = useState(false)
+  const [showSample, setShowSample] = useState(false)
 
   const q = useQuery({
     queryKey: ['client-v2', 'trip'],
@@ -406,9 +422,37 @@ function GuestTripTemplate() {
           }>
         }>
       }>,
+    enabled: showSample,
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading your trip…" />
+  if (!showSample) {
+    return (
+      <div className="mx-auto max-w-xl pb-4">
+        <p className="text-[12px] font-bold tracking-[0.2em] text-emer uppercase">
+          My trip
+        </p>
+        <h1 className="mt-2 text-[32px] font-bold tracking-[-0.5px] text-graph md:text-[40px]">
+          Open your ZEEN booking
+        </h1>
+        <p className="mt-3 text-[15px] leading-relaxed text-sgraph">
+          Sign in with your ZN code to load the live itinerary from ZEEN Ops —
+          stay dates, day plans, vendors, and driver status from the admin desk.
+        </p>
+        <div className="mt-6">
+          <ZnLoginForm onSuccess={() => navigate('/trip')} />
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowSample(true)}
+          className="mt-6 text-[13px] font-semibold text-emer hover:underline"
+        >
+          Preview a sample Moscow plan ›
+        </button>
+      </div>
+    )
+  }
+
+  if (q.isLoading) return <LoadingBlock label="Loading sample trip…" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -434,15 +478,15 @@ function GuestTripTemplate() {
   if (days.length === 0) {
     return (
       <EmptyBlock
-        title="No trip days yet"
-        body="Browse Around or Explore to start building days."
+        title="No sample days"
+        body="Sign in with your ZN code to open your real booking from ZEEN Ops."
       />
     )
   }
 
   return (
     <TripPlanView
-      title={`Explore a sample trip`}
+      title="Sample Moscow plan"
       subtitle={
         data.subtitle ?? 'Kids, food and the nearest mosque for every day.'
       }
@@ -452,30 +496,19 @@ function GuestTripTemplate() {
       headerExtra={
         <div className="space-y-3">
           <p className="rounded-[14px] border border-bord bg-mint/40 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-forest">
-            This is a sample Moscow plan for guests. Sign in with your ZN code
-            to open your real booking.
+            This is a curated preview — not your booking. Sign in with your ZN
+            code to open the live trip from ZEEN Ops / admin.
           </p>
-          {!showZn ? (
-            <button
-              type="button"
-              onClick={() => setShowZn(true)}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-bord bg-paper px-3.5 text-[13px] font-semibold text-forest shadow-[var(--shadow-card)]"
-            >
-              Have a ZN code?
-              <span className="text-emer">Open booking ›</span>
-            </button>
-          ) : (
-            <div className="mx-auto max-w-md md:mx-0">
-              <ZnLoginForm compact onSuccess={() => navigate('/trip')} />
-              <button
-                type="button"
-                onClick={() => setShowZn(false)}
-                className="mt-2 text-[12px] font-semibold text-sgraph"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
+          <div className="mx-auto max-w-md md:mx-0">
+            <ZnLoginForm compact onSuccess={() => navigate('/trip')} />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowSample(false)}
+            className="text-[12px] font-semibold text-sgraph"
+          >
+            Back to ZN login
+          </button>
         </div>
       }
     />
