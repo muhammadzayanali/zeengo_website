@@ -95,7 +95,7 @@ const ar: WebsiteMessages = {
     next: 'التالي',
     allCities: 'كل المدن',
   },
-  money: {
+  moneyPage: {
     title: 'المال في موسكو',
     subtitle:
       'أسعار حية تُحدَّث كل يوم عمل. حوّل عملات الخليج إلى روبل — واعرف كيف الدفع على الأرض.',
@@ -114,7 +114,7 @@ const ar: WebsiteMessages = {
     loading: 'جارٍ تحميل حجزك…',
     sessionExpired: 'انتهت الجلسة — سجّل الدخول مرة أخرى برمز ZN.',
   },
-  account: {
+  accountPage: {
     title: 'تسجيل الدخول إلى ZEEN',
     body: 'استخدم رمز حجز ZN لفتح تفاصيل الرحلة وطلب التغييرات داخل التطبيق.',
   },

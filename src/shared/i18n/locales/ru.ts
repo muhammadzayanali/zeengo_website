@@ -96,7 +96,7 @@ const ru: WebsiteMessages = {
     next: 'Далее',
     allCities: 'Все города',
   },
-  money: {
+  moneyPage: {
     title: 'Деньги в Москве',
     subtitle:
       'Официальные курсы ЦБ РФ на рабочий день. Конвертируйте валюты Персидского залива в рубли.',
@@ -115,7 +115,7 @@ const ru: WebsiteMessages = {
     loading: 'Загружаем бронирование…',
     sessionExpired: 'Сессия истекла — войдите снова с кодом ZN.',
   },
-  account: {
+  accountPage: {
     title: 'Вход в ZEEN',
     body: 'Используйте код бронирования ZN, чтобы открыть поездку и запросить изменения.',
   },

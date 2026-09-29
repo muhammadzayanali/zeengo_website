@@ -96,7 +96,7 @@ export const en = {
     next: 'Next',
     allCities: 'All cities',
   },
-  money: {
+  moneyPage: {
     title: 'Money in Moscow',
     subtitle:
       'Live rates updated every working day. Convert Gulf currencies to roubles — and know how payment works on the ground.',
@@ -115,11 +115,15 @@ export const en = {
     loading: 'Loading your booking…',
     sessionExpired: 'Session expired — sign in again with your ZN code.',
   },
-  account: {
+  accountPage: {
     title: 'Sign in to ZEEN',
     body: 'Use your ZN booking code to open trip details and request changes in-app.',
   },
 } as const
 
-export type WebsiteMessages = typeof en
+type DeepStringify<T> = {
+  [K in keyof T]: T[K] extends string ? string : DeepStringify<T[K]>
+}
+
+export type WebsiteMessages = DeepStringify<typeof en>
 export default en
