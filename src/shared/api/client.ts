@@ -5,7 +5,7 @@ import {
 } from '@/shared/auth/session'
 
 const FALLBACK =
-  'https://zeengobackend-production-0cde.up.railway.app/api/v1'
+  'https://zeengobackend-production-d058.up.railway.app/api/v1'
 
 function normalizeApiBase(raw: string): string {
   const t = raw.trim().replace(/\/$/, '')
