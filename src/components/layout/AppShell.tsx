@@ -1,8 +1,8 @@
-import { Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { SiteHeader } from './SiteHeader'
 import { BottomNav } from '../navigation/Nav'
 import { LanguageMenu } from './LanguageMenu'
+import { PageTransition } from './PageTransition'
 
 /**
  * Desktop = full-width website (header + max-width content).
@@ -24,7 +24,7 @@ export function AppShell() {
         <LanguageMenu compact />
       </div>
       <main className="mx-auto w-full max-w-6xl px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-2 md:px-6 md:pb-12 md:pt-4">
-        <Outlet />
+        <PageTransition />
       </main>
       <BottomNav />
     </div>

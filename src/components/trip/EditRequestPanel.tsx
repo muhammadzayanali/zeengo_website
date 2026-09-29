@@ -7,6 +7,7 @@ import {
   type ClientEditRequest,
   type ClientHome,
 } from '@/shared/api/clientPortal'
+import { InlineLoader } from '@/components/ui/Primitives'
 
 type RequestKind =
   | 'date_change'
@@ -355,9 +356,7 @@ export function EditRequestPanel({
           ) : null}
         </div>
 
-        {listQ.isLoading ? (
-          <p className="mt-3 text-sm text-sgraph">Loading requests…</p>
-        ) : requests.length === 0 ? (
+        {listQ.isLoading ? <InlineLoader /> : requests.length === 0 ? (
           <p className="mt-3 text-[13px] leading-relaxed text-sgraph">
             No change requests yet. Use New request when you need ZEEN to update
             this booking.

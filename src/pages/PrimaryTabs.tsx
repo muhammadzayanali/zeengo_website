@@ -83,7 +83,7 @@ export function AroundPage() {
     queryFn: () => clientV2Api.places(qs),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Finding what’s around…" />
+  if (q.isLoading) return <LoadingBlock fill label="Around you" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -308,7 +308,7 @@ export function ExplorePage() {
       }>,
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading Explore…" />
+  if (q.isLoading) return <LoadingBlock fill label="Explore" />
   if (q.isError) {
     return (
       <ErrorBlock

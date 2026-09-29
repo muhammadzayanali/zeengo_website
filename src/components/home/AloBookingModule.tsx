@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { clientV2Api } from '@/shared/api/clientV2'
+import { InlineLoader } from '@/components/ui/Primitives'
 
 type Mode = 'move' | 'stay' | 'do'
 type Picker = 'from' | 'to' | 'date' | 'people' | null
@@ -692,9 +693,7 @@ export function AloBookingModule({
           title={mode === 'stay' ? 'Where to stay' : 'Destination'}
           onClose={() => setPicker(null)}
         >
-          {destQ.isLoading ? (
-            <p className="px-3 py-4 text-sm text-sgraph">Loading places…</p>
-          ) : null}
+          {destQ.isLoading ? <InlineLoader /> : null}
           {toOptions.map((opt) => (
             <OptionRow
               key={opt}

@@ -34,7 +34,7 @@ export function PlacesPage({
     queryFn: () => clientV2Api.places(qs),
   })
 
-  if (q.isLoading) return <LoadingBlock />
+  if (q.isLoading) return <LoadingBlock fill />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -111,7 +111,7 @@ export function PlaceDetailPage({ id }: { id: string }) {
     queryFn: () => clientV2Api.place(id),
   })
 
-  if (q.isLoading) return <LoadingBlock />
+  if (q.isLoading) return <LoadingBlock fill />
   if (q.isError) {
     return (
       <ErrorBlock

@@ -366,7 +366,7 @@ export function HomePage() {
     queryFn: () => clientV2Api.home(),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading Moscow for you…" />
+  if (q.isLoading) return <LoadingBlock fill label="Moscow" />
   if (q.isError) {
     return (
       <ErrorBlock

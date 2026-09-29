@@ -154,7 +154,7 @@ function AuthenticatedTrip() {
   })
 
   if (homeQ.isLoading || itinQ.isLoading) {
-    return <LoadingBlock label="Loading your booking…" />
+    return <LoadingBlock fill label="Your booking" />
   }
   if (homeQ.isError) {
     const msg =
@@ -452,7 +452,7 @@ function GuestTripTemplate() {
     )
   }
 
-  if (q.isLoading) return <LoadingBlock label="Loading sample trip…" />
+  if (q.isLoading) return <LoadingBlock fill label="Sample plan" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -517,7 +517,7 @@ function GuestTripTemplate() {
 
 export function MyTripPage() {
   const { ready, isAuthenticated } = useAuth()
-  if (!ready) return <LoadingBlock label="Checking your session…" />
+  if (!ready) return <LoadingBlock fill />
   return isAuthenticated ? <AuthenticatedTrip /> : <GuestTripTemplate />
 }
 
@@ -530,7 +530,7 @@ export function AccountPage() {
     enabled: Boolean(isAuthenticated && accessToken),
   })
 
-  if (!ready) return <LoadingBlock label="Loading account…" />
+  if (!ready) return <LoadingBlock fill />
 
   if (!isAuthenticated) {
     return (
@@ -592,7 +592,7 @@ export function AccountPage() {
         </button>
       </div>
 
-      {homeQ.isLoading ? <LoadingBlock label="Loading booking…" /> : null}
+      {homeQ.isLoading ? <LoadingBlock label="Booking" /> : null}
       {home ? (
         <div className="mt-5 space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -651,8 +651,8 @@ export function LoginPage() {
     }
   }, [ready, isAuthenticated, navigate])
 
-  if (!ready) return <LoadingBlock label="Loading…" />
-  if (isAuthenticated) return <LoadingBlock label="Opening your trip…" />
+  if (!ready) return <LoadingBlock fill />
+  if (isAuthenticated) return <LoadingBlock fill label="Your trip" />
 
   return (
     <div className="mx-auto max-w-xl">

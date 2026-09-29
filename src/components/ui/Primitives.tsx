@@ -74,14 +74,7 @@ export function PrimaryButton({
   )
 }
 
-export function LoadingBlock({ label = 'Loading…' }: { label?: string }) {
-  return (
-    <div className="rounded-[20px] border border-bord bg-paper p-8 text-center shadow-[var(--shadow-card)]">
-      <div className="mx-auto mb-3 h-2 max-w-xs animate-pulse rounded bg-mist" />
-      <p className="text-sm text-sgraph">{label}</p>
-    </div>
-  )
-}
+export { LoadingBlock, InlineLoader, ZeenLoader } from './ZeenLoader'
 
 export function EmptyBlock({
   title,

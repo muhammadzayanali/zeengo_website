@@ -14,6 +14,7 @@ import {
   EmptyBlock,
   ErrorBlock,
   LoadingBlock,
+  InlineLoader,
   SectionHeader,
 } from '@/components/ui/Primitives'
 import { PlaceCard } from '@/components/cards/Cards'
@@ -192,7 +193,7 @@ export function CarsPage() {
     queryFn: () => clientV2Api.cars(query),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading cars & drivers…" />
+  if (q.isLoading) return <LoadingBlock fill label="Cars & drivers" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -291,7 +292,7 @@ export function StaysCatalogPage() {
     queryFn: () => clientV2Api.hotels(query),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading stays…" />
+  if (q.isLoading) return <LoadingBlock fill label="Stays" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -376,7 +377,7 @@ export function ActivitiesCatalogPage() {
     queryFn: () => clientV2Api.activities(query),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading activities…" />
+  if (q.isLoading) return <LoadingBlock fill label="Activities" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -457,7 +458,7 @@ export function GuidesCatalogPage() {
     queryFn: () => clientV2Api.guides(query),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading guides…" />
+  if (q.isLoading) return <LoadingBlock fill label="Guides" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -540,7 +541,7 @@ export function FoodCatalogPage() {
     queryFn: () => clientV2Api.restaurants(query),
   })
 
-  if (q.isLoading) return <LoadingBlock label="Loading restaurants…" />
+  if (q.isLoading) return <LoadingBlock fill label="Food" />
   if (q.isError) {
     return (
       <ErrorBlock
@@ -711,7 +712,7 @@ export function SearchCatalogPage() {
         </div>
       ) : null}
 
-      {qParam && q.isLoading ? <LoadingBlock label="Searching…" /> : null}
+      {qParam && q.isLoading ? <InlineLoader label="Search" /> : null}
       {qParam && q.isError ? (
         <ErrorBlock
           message={q.error instanceof Error ? q.error.message : 'Search failed'}

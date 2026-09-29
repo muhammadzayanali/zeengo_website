@@ -10,7 +10,7 @@ import {
   rubPerUnit,
   type FxCode,
 } from '@/shared/api/cbrFx'
-import { ErrorBlock, LoadingBlock } from '@/components/ui/Primitives'
+import { ErrorBlock, InlineLoader, LoadingBlock } from '@/components/ui/Primitives'
 import { openWhatsAppBook } from '@/shared/lib/whatsappBook'
 
 const QUICK_AMOUNTS = [100, 500, 1_000, 5_000]
@@ -63,8 +63,8 @@ export function MoneyTodayStrip() {
 
   if (q.isLoading) {
     return (
-      <div className="mb-5 rounded-[18px] border border-bord bg-paper px-4 py-3 text-[13px] text-sgraph shadow-[var(--shadow-card)]">
-        Loading CBR rates…
+      <div className="mb-5 rounded-[18px] border border-bord bg-paper px-4 py-4 shadow-[var(--shadow-card)]">
+        <InlineLoader />
       </div>
     )
   }
@@ -162,7 +162,7 @@ export function MoneyInMoscowPage() {
   const fromLabel = reversed ? 'RUB' : code
   const toLabel = reversed ? code : 'RUB'
 
-  if (q.isLoading) return <LoadingBlock label="Loading Central Bank rates…" />
+  if (q.isLoading) return <LoadingBlock fill label="Central Bank rates" />
   if (q.isError || !q.data) {
     return (
       <ErrorBlock
