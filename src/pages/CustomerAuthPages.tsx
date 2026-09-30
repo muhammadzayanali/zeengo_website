@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/Primitives'
 import { TripPlanView, type TripDay } from '@/components/trip/TripPlanView'
 import { EditRequestPanel } from '@/components/trip/EditRequestPanel'
+import { GuestChatLauncher } from '@/components/chat/GuestChatLauncher'
 
 export function ZnLoginForm({
   onSuccess,
@@ -139,22 +140,54 @@ function assignmentLabel(status?: string | null) {
 }
 
 function AuthenticatedTrip() {
-  const { accessToken, logout, refreshSession } = useAuth()
+  const { accessToken, bookingId, znCode, logout, refreshSession, loginWithZn } =
+    useAuth()
+  const [rebinding, setRebinding] = useState(false)
   const homeQ = useQuery({
-    queryKey: ['client-portal', 'home', accessToken],
+    queryKey: ['client-portal', 'home', bookingId, accessToken],
     queryFn: () => clientPortalApi.home(accessToken!),
-    enabled: Boolean(accessToken),
+    enabled: Boolean(accessToken && bookingId),
     retry: 1,
   })
   const itinQ = useQuery({
-    queryKey: ['client-portal', 'itinerary', accessToken],
+    queryKey: ['client-portal', 'itinerary', bookingId, accessToken],
     queryFn: () => clientPortalApi.itinerary(accessToken!),
-    enabled: Boolean(accessToken),
+    enabled: Boolean(accessToken && bookingId),
     retry: 1,
   })
 
-  if (homeQ.isLoading || itinQ.isLoading) {
-    return <LoadingBlock fill label="Your booking" />
+  const home = homeQ.data
+  const sessionMismatch = Boolean(
+    home &&
+      ((znCode && home.znCode && home.znCode !== znCode) ||
+        (bookingId && home.bookingId && home.bookingId !== bookingId)),
+  )
+
+  // Old API / stale token → home is another ZN. Re-bind session to the badge ZN.
+  useEffect(() => {
+    if (!sessionMismatch || !znCode || rebinding) return
+    let cancelled = false
+    setRebinding(true)
+    void (async () => {
+      try {
+        await loginWithZn(znCode)
+        if (!cancelled) {
+          await Promise.all([homeQ.refetch(), itinQ.refetch()])
+        }
+      } catch {
+        if (!cancelled) await logout()
+      } finally {
+        if (!cancelled) setRebinding(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionMismatch, znCode])
+
+  if (homeQ.isLoading || itinQ.isLoading || rebinding || sessionMismatch) {
+    return <LoadingBlock fill />
   }
   if (homeQ.isError) {
     const msg =
@@ -186,7 +219,8 @@ function AuthenticatedTrip() {
     )
   }
 
-  const home = homeQ.data!
+  if (!home) return <LoadingBlock fill />
+
   const itin = itinQ.data
   const bookingDays: TripDay[] = (itin?.days ?? []).map((day) => ({
     dayNumber: day.dayNumber,
@@ -316,6 +350,8 @@ function AuthenticatedTrip() {
           </div>
 
           <EditRequestPanel home={home} compact />
+
+          <GuestChatLauncher bookingId={home.bookingId} znCode={home.znCode} />
 
           {todayItems.length > 0 ? (
             <div className="rounded-[16px] border border-bord bg-paper px-4 py-3">
@@ -522,12 +558,12 @@ export function MyTripPage() {
 }
 
 export function AccountPage() {
-  const { ready, isAuthenticated, user, znCode, accessToken, logout } = useAuth()
+  const { ready, isAuthenticated, user, znCode, bookingId, accessToken, logout } = useAuth()
   const navigate = useNavigate()
   const homeQ = useQuery({
-    queryKey: ['client-portal', 'home', 'account', accessToken],
+    queryKey: ['client-portal', 'home', 'account', bookingId, accessToken],
     queryFn: () => clientPortalApi.home(accessToken!),
-    enabled: Boolean(isAuthenticated && accessToken),
+    enabled: Boolean(isAuthenticated && accessToken && bookingId),
   })
 
   if (!ready) return <LoadingBlock fill />
@@ -620,6 +656,11 @@ export function AccountPage() {
             </div>
           </div>
           <EditRequestPanel home={home} />
+          <GuestChatLauncher
+            bookingId={home.bookingId}
+            znCode={home.znCode}
+            variant="row"
+          />
         </div>
       ) : null}
 

@@ -2,6 +2,9 @@ const ACCESS_KEY = 'zeengo.customer.accessToken'
 const REFRESH_KEY = 'zeengo.customer.refreshToken'
 const BOOKING_KEY = 'zeengo.customer.booking'
 
+/** All customer-session keys we ever wrote (incl. legacy). */
+const SESSION_KEYS = [ACCESS_KEY, REFRESH_KEY, BOOKING_KEY] as const
+
 export type StoredBooking = {
   bookingId: string
   znCode: string
@@ -58,6 +61,22 @@ function removeStore(key: string) {
   }
 }
 
+/** Drop every zeengo.* key from a Storage (login leftovers / AssistiveTouch prefs stay if not prefixed). */
+function purgeZeengoKeys(storage: Storage) {
+  try {
+    const toRemove: string[] = []
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i)
+      if (key && (key.startsWith('zeengo.') || key.startsWith('zeengo_'))) {
+        toRemove.push(key)
+      }
+    }
+    for (const key of toRemove) storage.removeItem(key)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function getAccessToken(): string | null {
   return readStore(ACCESS_KEY)
 }
@@ -95,10 +114,19 @@ export function saveSession(input: {
   )
 }
 
+/** Sign-out / wipe — removeItem from localStorage + sessionStorage for all zeengo keys. */
 export function clearSession() {
-  removeStore(ACCESS_KEY)
-  removeStore(REFRESH_KEY)
-  removeStore(BOOKING_KEY)
+  for (const key of SESSION_KEYS) removeStore(key)
+  try {
+    purgeZeengoKeys(localStorage)
+  } catch {
+    /* ignore */
+  }
+  try {
+    purgeZeengoKeys(sessionStorage)
+  } catch {
+    /* ignore */
+  }
 }
 
 export function normalizeZnCode(raw: string): string {

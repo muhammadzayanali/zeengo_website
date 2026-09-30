@@ -4,11 +4,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
 import { authApi } from '@/shared/api/clientPortal'
 import { setTokenRefresher } from '@/shared/api/client'
+import { queryClient } from '@/shared/api/queryClient'
 import type { ClientUser } from '@/shared/auth/session'
 import {
   clearSession,
@@ -33,6 +35,20 @@ type AuthState = {
 
 const AuthContext = createContext<AuthState | null>(null)
 
+function readJwtBookingId(access: string): string | undefined {
+  try {
+    const [, payloadB64] = access.split('.')
+    if (!payloadB64) return undefined
+    const pad = '='.repeat((4 - (payloadB64.length % 4)) % 4)
+    const claims = JSON.parse(
+      atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/') + pad),
+    ) as { bookingId?: string }
+    return claims.bookingId
+  } catch {
+    return undefined
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false)
   const [accessToken, setAccessToken] = useState<string | null>(null)
@@ -46,16 +62,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
     setZnCode(null)
     setBookingId(null)
+    queryClient.clear()
   }, [])
 
   const applySession = useCallback(
-    (input: {
-      accessToken: string
-      refreshToken: string
-      bookingId: string
-      znCode: string
-      user?: ClientUser | null
-    }) => {
+    (
+      input: {
+        accessToken: string
+        refreshToken: string
+        bookingId: string
+        znCode: string
+        user?: ClientUser | null
+      },
+      opts?: { clearCache?: boolean },
+    ) => {
+      if (opts?.clearCache !== false) {
+        queryClient.clear()
+      }
       saveSession({
         accessToken: input.accessToken,
         refreshToken: input.refreshToken,
@@ -79,12 +102,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       const tokens = await authApi.refresh(refreshToken)
-      applySession({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        bookingId: booking.bookingId,
-        znCode: booking.znCode,
-      })
+      applySession(
+        {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          bookingId: booking.bookingId,
+          znCode: booking.znCode,
+        },
+        { clearCache: false },
+      )
       try {
         const me = await authApi.me(tokens.accessToken)
         setUser(me.user)
@@ -98,14 +124,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [applySession, wipeLocal])
 
+  const applySessionRef = useRef(applySession)
+  const refreshSessionRef = useRef(refreshSession)
+  const wipeLocalRef = useRef(wipeLocal)
+  applySessionRef.current = applySession
+  refreshSessionRef.current = refreshSession
+  wipeLocalRef.current = wipeLocal
+
   useEffect(() => {
     setTokenRefresher(async () => {
-      const ok = await refreshSession()
+      const ok = await refreshSessionRef.current()
       return ok ? getAccessToken() : null
     })
     return () => setTokenRefresher(null)
-  }, [refreshSession])
+  }, [])
 
+  // Mount-only hydrate — deps must stay a fixed empty array (HMR-safe).
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -118,25 +152,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      // Hydrate ZN badge immediately from storage while we validate tokens
       if (!cancelled) {
         setZnCode(booking.znCode)
         setBookingId(booking.bookingId)
       }
 
       try {
-        if (token) {
-          const me = await authApi.me(token)
+        let access = token
+        if (!access) {
+          const ok = await refreshSessionRef.current()
+          if (!ok) {
+            if (!cancelled) wipeLocalRef.current()
+            return
+          }
+          access = getAccessToken()
+        }
+
+        // Upgrade legacy tokens that have no bookingId claim (same client, many ZNs).
+        if (access && booking.znCode && !readJwtBookingId(access)) {
+          try {
+            const result = await authApi.znLogin(booking.znCode)
+            if (cancelled) return
+            applySessionRef.current({
+              accessToken: result.accessToken,
+              refreshToken: result.refreshToken,
+              bookingId: result.bookingId,
+              znCode: result.znCode,
+              user: result.user,
+            })
+            access = result.accessToken
+          } catch {
+            /* keep existing token if upgrade fails */
+          }
+        }
+
+        if (access) {
+          const me = await authApi.me(access)
           if (cancelled) return
-          setAccessToken(token)
+          setAccessToken(access)
           setUser(me.user)
-        } else {
-          const ok = await refreshSession()
-          if (!ok && !cancelled) wipeLocal()
         }
       } catch {
-        const ok = await refreshSession()
-        if (!ok && !cancelled) wipeLocal()
+        const ok = await refreshSessionRef.current()
+        if (!ok && !cancelled) wipeLocalRef.current()
       } finally {
         if (!cancelled) setReady(true)
       }
@@ -144,7 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [refreshSession, wipeLocal])
+  }, [])
 
   const loginWithZn = useCallback(
     async (rawCode: string) => {
@@ -180,7 +238,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthState>(
     () => ({
       ready,
-      // Access JWT is enough for My Trip APIs; user profile is display-only.
       isAuthenticated: Boolean(accessToken && bookingId),
       accessToken,
       user,

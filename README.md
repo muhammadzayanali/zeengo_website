@@ -12,7 +12,7 @@ npm run dev
 
 → http://127.0.0.1:5174/
 
-Set API in `.env` (see `.env.example`). Default points at Railway `client/v2`.
+API bases in `.env`: `VITE_API_BASE_URL_LOCAL` (dev) and `VITE_API_BASE_URL_PRODUCTION` (build).
 
 ## What changed vs the HTML demo
 

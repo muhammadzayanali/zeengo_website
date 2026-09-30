@@ -11,8 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-.env
 .env.*.local
+# .env is committed intentionally (no secrets — API base + WhatsApp only)
 
 # Editor directories and files
 .vscode/*
