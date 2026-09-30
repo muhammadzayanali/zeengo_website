@@ -121,36 +121,48 @@ function JourneySummary({
         <p className="text-[12px] font-semibold text-sgraph">{dayCount} days</p>
       </div>
 
-      {/* Mobile: vertical timeline (client prototype) */}
-      <ol className="relative ms-1.5 space-y-6 border-l-2 border-emer/35 ps-6 md:hidden">
-        {days.map((day, idx) => (
-          <li key={day.dayNumber} className="relative">
-            <span
-              className={`absolute -start-[1.45rem] top-1.5 h-3 w-3 rounded-full border-2 border-emer ${
-                idx === 0 ? 'bg-emer' : 'bg-paper'
-              }`}
-              aria-hidden
-            />
-            <p className="text-[11px] font-bold tracking-[0.14em] text-emer uppercase">
-              Day {day.dayNumber}
-            </p>
-            <p className="mt-0.5 text-[17px] font-bold tracking-[-0.25px] text-graph">
-              {day.title}
-            </p>
-            <div className="mt-2.5 flex flex-wrap gap-2">
-              <JourneyChip
-                icon={<PinIcon />}
-                label={`${day.stops.length} stops`}
-              />
-              {day.mosqueKm != null ? (
-                <JourneyChip
-                  icon={<MosqueIcon />}
-                  label={`Mosque ${day.mosqueKm} km`}
+      {/* Mobile: vertical timeline — nodes + continuous connector in one rail */}
+      <ol className="md:hidden">
+        {days.map((day, idx) => {
+          const isLast = idx === days.length - 1
+          return (
+            <li
+              key={day.dayNumber}
+              className="grid grid-cols-[1.25rem_minmax(0,1fr)] gap-x-3.5"
+            >
+              <div className="relative flex flex-col items-center" aria-hidden>
+                <span
+                  className={`relative z-[1] mt-1.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-emer ring-[3px] ring-paper ${
+                    idx === 0 ? 'bg-emer' : 'bg-paper'
+                  }`}
                 />
-              ) : null}
-            </div>
-          </li>
-        ))}
+                {!isLast ? (
+                  <span className="mt-1 w-[2px] min-h-[1.25rem] flex-1 rounded-full bg-emer/40" />
+                ) : null}
+              </div>
+              <div className={isLast ? 'pb-1' : 'pb-6'}>
+                <p className="text-[11px] font-bold tracking-[0.14em] text-emer uppercase">
+                  Day {day.dayNumber}
+                </p>
+                <p className="mt-0.5 text-[17px] font-bold tracking-[-0.25px] text-graph">
+                  {day.title}
+                </p>
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  <JourneyChip
+                    icon={<PinIcon />}
+                    label={`${day.stops.length} stops`}
+                  />
+                  {day.mosqueKm != null ? (
+                    <JourneyChip
+                      icon={<MosqueIcon />}
+                      label={`Mosque ${day.mosqueKm} km`}
+                    />
+                  ) : null}
+                </div>
+              </div>
+            </li>
+          )
+        })}
       </ol>
 
       {/* Desktop website: horizontal journey strip */}

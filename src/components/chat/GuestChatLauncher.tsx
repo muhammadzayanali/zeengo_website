@@ -15,6 +15,8 @@ type Props = {
   znCode?: string | null
   /** Compact row for Account; default is trip “Need help?” card */
   variant?: 'card' | 'row'
+  /** Driver lane unlocked after assignment is accepted+ */
+  driverChatReady?: boolean
 }
 
 const STORAGE_KEY = 'zeengo.guestChatBall'
@@ -121,6 +123,7 @@ export function GuestChatLauncher({
   bookingId,
   znCode,
   variant = 'card',
+  driverChatReady = false,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [ballPos, setBallPos] = useState<BallPos>(() => {
@@ -193,8 +196,9 @@ export function GuestChatLauncher({
               Message ZEEN
             </p>
             <p className="mt-1 max-w-[18rem] text-[13px] leading-relaxed text-sgraph">
-              Chat with Support, your driver, or Splizer — without leaving{' '}
-              {znCode ?? 'your trip'}.
+              Chat with Support
+              {driverChatReady ? ', your driver,' : ''} or Splizer — without
+              leaving {znCode ?? 'your trip'}.
             </p>
           </div>
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emer text-white shadow-[0_6px_16px_rgba(31,107,79,0.28)] transition group-hover:bg-forest">
@@ -204,7 +208,9 @@ export function GuestChatLauncher({
         <div className="mt-3.5 flex items-center gap-2">
           {[
             ['ZN', 'Support', 'from-[#1f6b4f] to-[#12372a]'],
-            ['DR', 'Driver', 'from-[#3e8e68] to-[#1f6b4f]'],
+            ...(driverChatReady
+              ? ([['DR', 'Driver', 'from-[#3e8e68] to-[#1f6b4f]']] as const)
+              : []),
             ['SP', 'Splizer', 'from-[#c7a96b] to-[#8a7342]'],
           ].map(([ini, label, accent]) => (
             <span
@@ -257,6 +263,7 @@ export function GuestChatLauncher({
                 <GuestChatPanel
                   bookingId={bookingId}
                   sheet
+                  driverChatReady={driverChatReady}
                   onClose={() => setOpen(false)}
                 />
               </div>

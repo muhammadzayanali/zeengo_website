@@ -29,6 +29,7 @@ function useBookingQuery(): CatalogQuery {
       q: params.get('q') || undefined,
       people: params.get('people') ? Number(params.get('people')) : undefined,
       date: params.get('date') || undefined,
+      dateTo: params.get('dateTo') || undefined,
       from: params.get('from') || undefined,
       to: params.get('to') || undefined,
       city: params.get('city') || undefined,
@@ -104,22 +105,37 @@ function CatalogToolbar({
   return (
     <div className="mt-4 space-y-3">
       <form
-        className="flex flex-col gap-2 sm:flex-row"
+        className="flex items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault()
           onSearch(draft.trim())
         }}
       >
-        <input
-          className="min-h-[48px] flex-1 rounded-[14px] border border-bord bg-paper px-4 text-sm shadow-[var(--shadow-card)]"
-          placeholder={placeholder}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          aria-label="Search catalog"
-        />
+        <label className="flex min-h-10 flex-1 items-center gap-2 rounded-[12px] border border-bord bg-paper px-3 shadow-[var(--shadow-card)] focus-within:border-fresh/40">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            className="shrink-0 text-sgraph"
+            aria-hidden
+          >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16.2 16.2 3.3 3.3" strokeLinecap="round" />
+          </svg>
+          <input
+            className="w-full border-0 bg-transparent py-2 text-[13.5px] text-graph outline-none placeholder:text-sgraph"
+            placeholder={placeholder}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            aria-label="Search catalog"
+          />
+        </label>
         <button
           type="submit"
-          className="min-h-[48px] rounded-[14px] bg-emer px-5 text-sm font-semibold text-white"
+          className="inline-flex h-10 shrink-0 items-center justify-center rounded-[12px] bg-emer px-3.5 text-[13px] font-semibold text-white"
         >
           Search
         </button>
@@ -214,9 +230,8 @@ export function CarsPage() {
       </h1>
       <TripSummary query={query} />
       <p className="mt-2 max-w-2xl text-sm text-sgraph">
-        Select a live driver or a vehicle class for your ZN booking. ZEEN desk
-        confirms the assignment; your driver then runs and completes the trip —
-        status shows on My trip.
+        Request a car style via WhatsApp — ZEEN Ops assigns and your driver
+        confirms on My trip. Driver chat unlocks after they accept.
       </p>
 
       <SectionHeader title="Available drivers" eyebrow="DB" />
@@ -264,7 +279,7 @@ function DriverCard({ item, query }: { item: CarItem; query: CatalogQuery }) {
         ) : null}
       </div>
       <CatalogRequestButton
-        label="Book on WhatsApp"
+        label="Request booking"
         payload={{
           kind: 'car',
           itemId: item.id,
@@ -275,6 +290,7 @@ function DriverCard({ item, query }: { item: CarItem; query: CatalogQuery }) {
             .join(' · '),
           context: {
             date: query.date,
+            dateTo: query.dateTo,
             from: query.from,
             to: query.to,
             people: query.people,
@@ -354,13 +370,14 @@ function HotelCard({ item, query }: { item: HotelItem; query: CatalogQuery }) {
         {item.subtitle}
       </p>
       <CatalogRequestButton
-        label="Book on WhatsApp"
+        label="Request booking"
         payload={{
           kind: 'stay',
           title: item.title,
           detail: item.subtitle,
           context: {
             date: query.date,
+            dateTo: query.dateTo,
             people: query.people,
             city: item.city ?? query.city,
           },
@@ -439,7 +456,7 @@ function ActivityCard({ item }: { item: ActivityItem }) {
         {item.subtitle}
       </p>
       <CatalogRequestButton
-        label="Book on WhatsApp"
+        label="Request booking"
         payload={{
           kind: 'activity',
           title: item.title,
@@ -522,7 +539,7 @@ function GuideCard({ item }: { item: GuideItem }) {
         <p className="mt-1 text-[12px] font-semibold text-forest">{item.phone}</p>
       ) : null}
       <CatalogRequestButton
-        label="Book on WhatsApp"
+        label="Request booking"
         payload={{
           kind: 'guide',
           title: item.title,
@@ -626,7 +643,7 @@ function RestaurantCard({ item }: { item: RestaurantItem }) {
         {item.subtitle}
       </p>
       <CatalogRequestButton
-        label="Book on WhatsApp"
+        label="Request booking"
         payload={{
           kind: 'food',
           title: item.title,
@@ -661,23 +678,38 @@ export function SearchCatalogPage() {
         Search stays, activities, guides, food, and places from the database.
       </p>
       <form
-        className="mt-4 flex flex-col gap-3 sm:flex-row"
+        className="mt-4 flex items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault()
           const next = draft.trim()
           navigate(next ? `/search?q=${encodeURIComponent(next)}` : '/search')
         }}
       >
-        <input
-          className="min-h-[54px] flex-1 rounded-[16px] border border-bord bg-paper px-4 shadow-[var(--shadow-card)]"
-          placeholder="Try hotel, activity, guide…"
-          aria-label="Search"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-        />
+        <label className="flex min-h-10 flex-1 items-center gap-2 rounded-[12px] border border-bord bg-paper px-3 shadow-[var(--shadow-card)] focus-within:border-fresh/40">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            className="shrink-0 text-sgraph"
+            aria-hidden
+          >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16.2 16.2 3.3 3.3" strokeLinecap="round" />
+          </svg>
+          <input
+            className="w-full border-0 bg-transparent py-2 text-[13.5px] text-graph outline-none placeholder:text-sgraph"
+            placeholder="Try hotel, activity, guide…"
+            aria-label="Search"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+          />
+        </label>
         <button
           type="submit"
-          className="min-h-[54px] rounded-[16px] bg-emer px-6 font-semibold text-white"
+          className="inline-flex h-10 shrink-0 items-center justify-center rounded-[12px] bg-emer px-3.5 text-[13px] font-semibold text-white"
         >
           Search
         </button>

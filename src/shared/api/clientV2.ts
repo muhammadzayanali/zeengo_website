@@ -64,6 +64,7 @@ export type CatalogQuery = {
   city?: string
   people?: number
   date?: string
+  dateTo?: string
   from?: string
   to?: string
   page?: number

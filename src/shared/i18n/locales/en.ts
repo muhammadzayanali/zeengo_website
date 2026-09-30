@@ -16,7 +16,7 @@ export const en = {
   langAr: 'العربية',
   langRu: 'Русский',
   bookWhatsApp: 'Book on WhatsApp',
-  bookHint: 'Opens WhatsApp with code ZEEN20 (20% off).',
+  bookHint: 'Opens WhatsApp with your ZN code when signed in, or ZEEN20 when not.',
   loading: 'Loading…',
   tryAgain: 'Try again',
   seeAll: 'See all',

@@ -305,7 +305,7 @@ export function EditRequestPanel({
               <p className="text-[12px] text-sgraph">
                 Need a car or stay?{' '}
                 <Link to="/cars" className="font-semibold text-emer hover:underline">
-                  Select a driver
+                  Request a car
                 </Link>{' '}
                 or{' '}
                 <Link to="/stays" className="font-semibold text-emer hover:underline">

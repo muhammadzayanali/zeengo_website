@@ -13,10 +13,15 @@ export type ClientHome = {
   bookingId: string
   znCode: string
   status: string
+  requestStatus?: string
+  source?: string
+  customerNotes?: string | null
+  rejectionReason?: string | null
   clientName: string
   packageName?: string | null
   packageId?: string | null
   partySize: number
+  childrenCount?: number
   guests?: number
   arrivalDate?: string | null
   departureDate?: string | null

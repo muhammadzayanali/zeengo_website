@@ -12,6 +12,7 @@ import {
   MyTripPage,
 } from '@/pages/CustomerAuthPages'
 import { MoneyPage, SimpleHub } from '@/pages/HubPages'
+import { BookingRequestPage } from '@/pages/BookingRequestPage'
 import {
   CarsPage,
   FoodCatalogPage,
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="around" element={<AroundPage />} />
               <Route path="explore" element={<ExplorePage />} />
               <Route path="trip" element={<MyTripPage />} />
+              <Route path="book/request" element={<BookingRequestPage />} />
               <Route path="account" element={<AccountPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="stays" element={<StaysCatalogPage />} />

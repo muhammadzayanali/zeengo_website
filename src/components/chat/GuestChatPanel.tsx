@@ -54,6 +54,8 @@ type Props = {
   compact?: boolean
   /** Fill a modal/sheet (no outer card chrome). */
   sheet?: boolean
+  /** Driver lane unlocked after assignment is accepted+ */
+  driverChatReady?: boolean
   onClose?: () => void
 }
 
@@ -61,6 +63,7 @@ export function GuestChatPanel({
   bookingId,
   compact = false,
   sheet = false,
+  driverChatReady = false,
   onClose,
 }: Props) {
   const { accessToken, user, isAuthenticated } = useAuth()
@@ -74,6 +77,10 @@ export function GuestChatPanel({
   const lastTypingEmit = useRef(0)
 
   useGuestChatSocket(Boolean(isAuthenticated && accessToken))
+
+  useEffect(() => {
+    if (!driverChatReady && lane === 'driver') setLane('admin')
+  }, [driverChatReady, lane])
 
   const threadQ = useQuery({
     queryKey: guestChatKeys.thread(bookingId),
@@ -346,20 +353,30 @@ export function GuestChatPanel({
           {CHAT_LANES.map((tab) => {
             const selected = lane === tab.role
             const unread = unreadByLane[tab.role]
+            const locked = tab.role === 'driver' && !driverChatReady
             return (
               <button
                 key={tab.role}
                 type="button"
                 role="tab"
                 aria-selected={selected}
+                disabled={locked}
+                title={
+                  locked
+                    ? 'Driver chat unlocks after your driver confirms'
+                    : undefined
+                }
                 onClick={() => {
+                  if (locked) return
                   setLane(tab.role)
                   inputRef.current?.focus()
                 }}
                 className={
-                  selected
-                    ? 'flex shrink-0 items-center gap-2.5 rounded-[16px] bg-forest px-3 py-2 text-left text-white shadow-[0_6px_16px_rgba(18,55,42,0.22)] transition'
-                    : 'flex shrink-0 items-center gap-2.5 rounded-[16px] border border-bord bg-paper/90 px-3 py-2 text-left text-graph shadow-[var(--shadow-card)] transition hover:border-emer/35'
+                  locked
+                    ? 'flex shrink-0 cursor-not-allowed items-center gap-2.5 rounded-[16px] border border-bord bg-ivory/80 px-3 py-2 text-left text-sgraph opacity-60'
+                    : selected
+                      ? 'flex shrink-0 items-center gap-2.5 rounded-[16px] bg-forest px-3 py-2 text-left text-white shadow-[0_6px_16px_rgba(18,55,42,0.22)] transition'
+                      : 'flex shrink-0 items-center gap-2.5 rounded-[16px] border border-bord bg-paper/90 px-3 py-2 text-left text-graph shadow-[var(--shadow-card)] transition hover:border-emer/35'
                 }
               >
                 <span

@@ -102,11 +102,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       const tokens = await authApi.refresh(refreshToken)
+      const claimBookingId = readJwtBookingId(tokens.accessToken)
       applySession(
         {
           accessToken: tokens.accessToken,
           refreshToken: tokens.refreshToken,
-          bookingId: booking.bookingId,
+          bookingId: claimBookingId || booking.bookingId,
           znCode: booking.znCode,
         },
         { clearCache: false },

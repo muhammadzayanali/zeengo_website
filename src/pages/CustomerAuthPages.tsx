@@ -148,6 +148,11 @@ function AuthenticatedTrip() {
     queryFn: () => clientPortalApi.home(accessToken!),
     enabled: Boolean(accessToken && bookingId),
     retry: 1,
+    refetchInterval: (q) => {
+      const status = q.state.data?.assignment?.status
+      if (status === 'pending' || status === 'accepted') return 15_000
+      return false
+    },
   })
   const itinQ = useQuery({
     queryKey: ['client-portal', 'itinerary', bookingId, accessToken],
@@ -257,6 +262,10 @@ function AuthenticatedTrip() {
       assignStatus &&
       ['accepted', 'in_progress', 'active'].includes(assignStatus),
   )
+  const driverChatReady = Boolean(
+    assignStatus &&
+      ['accepted', 'in_progress', 'active', 'completed'].includes(assignStatus),
+  )
   const todayItems = home.todayProgram ?? []
 
   return (
@@ -286,6 +295,48 @@ function AuthenticatedTrip() {
       }
       headerExtra={
         <div className="space-y-3">
+          {home.requestStatus &&
+          home.source &&
+          home.source !== 'staff' &&
+          home.requestStatus !== 'confirmed' ? (
+            <div
+              className={`rounded-[16px] border px-4 py-3 ${
+                home.requestStatus === 'rejected'
+                  ? 'border-rose-200 bg-rose-50'
+                  : 'border-bord bg-mist/70'
+              }`}
+            >
+              <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+                Booking request
+              </p>
+              <p className="mt-1 text-sm font-semibold text-graph">
+                {home.requestStatus === 'pending'
+                  ? 'Your booking request is being reviewed.'
+                  : home.requestStatus === 'under_review'
+                    ? 'Your booking is being reviewed.'
+                    : home.requestStatus === 'rejected'
+                      ? 'Your booking request was not confirmed.'
+                      : home.requestStatus.replace(/_/g, ' ')}
+              </p>
+              {home.requestStatus === 'rejected' && home.rejectionReason ? (
+                <p className="mt-1 text-[12.5px] text-sgraph">
+                  {home.rejectionReason}
+                </p>
+              ) : null}
+              {home.requestStatus === 'rejected' ? (
+                <Link
+                  to="/stays"
+                  className="mt-2 inline-flex text-sm font-semibold text-emer"
+                >
+                  Browse catalog again ›
+                </Link>
+              ) : (
+                <p className="mt-1 text-[12.5px] text-sgraph">
+                  Price to be confirmed · ZEEN Ops will update this trip.
+                </p>
+              )}
+            </div>
+          ) : null}
           <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
             {[
               [home.arrivalDate ?? '—', 'arrival'],
@@ -329,21 +380,28 @@ function AuthenticatedTrip() {
                     {assignLabel}
                   </p>
                 ) : null}
+                {assignStatus === 'pending' ? (
+                  <p className="mt-1 text-[12.5px] text-sgraph">
+                    ZEEN proposed this driver — they confirm before the trip goes
+                    live. Driver chat unlocks after confirmation.
+                  </p>
+                ) : null}
               </>
             ) : (
               <>
                 <p className="mt-0.5 font-semibold text-graph">
-                  No driver assigned yet
+                  ZEEN is assigning your driver
                 </p>
                 <p className="text-[12.5px] text-sgraph">
-                  Select a driver for {home.znCode} — ZEEN confirms, then your
-                  driver completes the ride.
+                  Your desk matches a driver for {home.znCode}. You&apos;ll see
+                  them here once they accept. Prefer a car style? Message Support
+                  or request via WhatsApp.
                 </p>
                 <Link
                   to="/cars"
                   className="mt-2 inline-flex text-[13px] font-semibold text-emer hover:underline"
                 >
-                  Select a driver ›
+                  Request a car (WhatsApp) ›
                 </Link>
               </>
             )}
@@ -351,7 +409,11 @@ function AuthenticatedTrip() {
 
           <EditRequestPanel home={home} compact />
 
-          <GuestChatLauncher bookingId={home.bookingId} znCode={home.znCode} />
+          <GuestChatLauncher
+            bookingId={home.bookingId}
+            znCode={home.znCode}
+            driverChatReady={driverChatReady}
+          />
 
           {todayItems.length > 0 ? (
             <div className="rounded-[16px] border border-bord bg-paper px-4 py-3">
@@ -403,9 +465,9 @@ function AuthenticatedTrip() {
           {!hasLiveDriver ? (
             <Link
               to="/cars"
-              className="flex min-h-12 w-full items-center justify-center rounded-[16px] bg-emer px-5 font-semibold text-white shadow-[0_4px_14px_rgba(31,107,79,.25)]"
+              className="flex min-h-12 w-full items-center justify-center rounded-[16px] border border-bord bg-paper px-5 font-semibold text-forest shadow-[var(--shadow-card)]"
             >
-              {home.driver ? 'Change driver' : 'Select a driver'}
+              Request a car (WhatsApp)
             </Link>
           ) : (
             <Link
@@ -660,6 +722,12 @@ export function AccountPage() {
             bookingId={home.bookingId}
             znCode={home.znCode}
             variant="row"
+            driverChatReady={Boolean(
+              home.assignment?.status &&
+                ['accepted', 'in_progress', 'active', 'completed'].includes(
+                  home.assignment.status,
+                ),
+            )}
           />
         </div>
       ) : null}

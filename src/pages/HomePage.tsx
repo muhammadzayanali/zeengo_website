@@ -167,7 +167,7 @@ function HomeBody({ data }: { data: HomeFeed }) {
   return (
     <>
       <section className="mb-6 md:mb-8">
-        <div className="relative md:overflow-hidden md:rounded-[28px] md:border md:border-bord md:bg-gradient-to-br md:from-mist md:via-ivory md:to-[#e8f3ed] md:px-7 md:py-8 md:shadow-[var(--shadow-card)] lg:px-10 lg:py-10">
+        <div className="relative md:rounded-[28px] md:border md:border-bord md:bg-gradient-to-br md:from-mist md:via-ivory md:to-[#e8f3ed] md:px-7 md:py-8 md:shadow-[var(--shadow-card)] lg:px-10 lg:py-10">
           <div
             className="pointer-events-none absolute -top-24 -right-16 hidden h-64 w-64 rounded-full bg-mint/50 blur-3xl md:block"
             aria-hidden

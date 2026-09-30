@@ -11,7 +11,8 @@ import {
   type FxCode,
 } from '@/shared/api/cbrFx'
 import { ErrorBlock, InlineLoader, LoadingBlock } from '@/components/ui/Primitives'
-import { openWhatsAppBook } from '@/shared/lib/whatsappBook'
+import { openWhatsAppBook, resolveWhatsAppCode } from '@/shared/lib/whatsappBook'
+import { useAuth } from '@/shared/auth/AuthContext'
 
 const QUICK_AMOUNTS = [100, 500, 1_000, 5_000]
 
@@ -125,6 +126,7 @@ export function MoneyTodayStrip() {
 }
 
 export function MoneyInMoscowPage() {
+  const { znCode } = useAuth()
   const [searchParams] = useSearchParams()
   const fromParam = (searchParams.get('from') || 'SAR').toUpperCase()
   const initialFrom = (
@@ -329,7 +331,7 @@ export function MoneyInMoscowPage() {
             type="button"
             onClick={() =>
               openWhatsAppBook(
-                'Hello ZEEN, I have a question about money and payment in Moscow. Code ZEEN20.',
+                `Hello ZEEN, I have a question about money and payment in Moscow. Code ${resolveWhatsAppCode(znCode)}.`,
               )
             }
             className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-[16px] border border-bord bg-paper text-sm font-semibold text-forest shadow-[var(--shadow-card)] transition hover:border-fresh/40"

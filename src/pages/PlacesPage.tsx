@@ -175,7 +175,7 @@ export function PlaceDetailPage({ id }: { id: string }) {
           ) : null}
           {p.title ? (
             <CatalogRequestButton
-              label="Book on WhatsApp"
+              label="Request booking"
               payload={{
                 kind: bookKind,
                 title: p.title,
