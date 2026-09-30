@@ -28,7 +28,7 @@ type AuthState = {
   user: ClientUser | null
   znCode: string | null
   bookingId: string | null
-  loginWithZn: (znCode: string) => Promise<void>
+  loginWithZn: (znCode: string, phone: string) => Promise<void>
   logout: () => Promise<void>
   refreshSession: () => Promise<boolean>
 }
@@ -169,22 +169,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           access = getAccessToken()
         }
 
-        // Upgrade legacy tokens that have no bookingId claim (same client, many ZNs).
-        if (access && booking.znCode && !readJwtBookingId(access)) {
-          try {
-            const result = await authApi.znLogin(booking.znCode)
-            if (cancelled) return
-            applySessionRef.current({
-              accessToken: result.accessToken,
-              refreshToken: result.refreshToken,
-              bookingId: result.bookingId,
-              znCode: result.znCode,
-              user: result.user,
-            })
-            access = result.accessToken
-          } catch {
-            /* keep existing token if upgrade fails */
-          }
+        // Tokens without a bookingId claim predate booking-bound sessions.
+        if (access && !readJwtBookingId(access)) {
+          if (!cancelled) wipeLocalRef.current()
+          return
         }
 
         if (access) {
@@ -206,12 +194,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loginWithZn = useCallback(
-    async (rawCode: string) => {
+    async (rawCode: string, rawPhone: string) => {
       const code = normalizeZnCode(rawCode)
       if (!/^ZN\d{4,6}$/.test(code)) {
         throw new Error('Enter a valid ZN code (e.g. ZN0004)')
       }
-      const result = await authApi.znLogin(code)
+      const phone = rawPhone.trim()
+      if (phone.replace(/\D/g, '').length < 7) {
+        throw new Error('Enter the phone number used for this booking')
+      }
+      const result = await authApi.znLogin(code, phone)
       applySession({
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,

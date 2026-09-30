@@ -154,7 +154,7 @@ export function BookingRequestPage() {
       setResultZn(booking.znCode)
       setStep('done')
       try {
-        await loginWithZn(booking.znCode)
+        await loginWithZn(booking.znCode, form.phone)
       } catch {
         // Customer can sign in manually with the ZN on Account / My Trip.
       }

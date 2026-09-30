@@ -97,9 +97,10 @@ export type ClientEditRequest = {
 }
 
 export const authApi = {
-  znLogin: (znCode: string) =>
+  znLogin: (znCode: string, phone: string) =>
     apiPost<ZnLoginResult>('/auth/client/zn-login', {
       znCode,
+      phone,
       platform: 'web',
     }),
   refresh: (refreshToken: string) =>

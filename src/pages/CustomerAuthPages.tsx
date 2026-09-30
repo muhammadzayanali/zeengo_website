@@ -22,16 +22,18 @@ export function ZnLoginForm({
 }) {
   const { loginWithZn } = useAuth()
   const [znCode, setZnCode] = useState('')
+  const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-  const canSubmit = znCode.trim().length >= 2 && !busy
+  const canSubmit =
+    znCode.trim().length >= 2 && phone.replace(/\D/g, '').length >= 7 && !busy
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
     setBusy(true)
     try {
-      await loginWithZn(znCode)
+      await loginWithZn(znCode, phone)
       onSuccess?.()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
@@ -55,7 +57,7 @@ export function ZnLoginForm({
             ZEEN booking access
           </p>
           <h2 className="mt-2 text-[22px] font-bold tracking-[-0.3px] text-graph md:text-[24px]">
-            Enter your ZN code
+            Enter your ZN code and phone
           </h2>
           <p className="mt-2 max-w-md text-[14px] leading-relaxed text-sgraph">
             Opens your itinerary, driver, hotel notes, and desk support.
@@ -79,6 +81,22 @@ export function ZnLoginForm({
             inputMode="text"
             className="w-full rounded-[16px] border border-bord bg-ivory px-4 py-3.5 font-mono text-[18px] tracking-[0.14em] text-graph outline-none placeholder:font-sans placeholder:text-[15px] placeholder:tracking-normal placeholder:text-sgraph/70 focus:border-fresh/45 focus:bg-paper focus:shadow-[0_0_0_3px_rgba(62,142,104,0.12)]"
             aria-label="ZN booking code"
+          />
+        </label>
+
+        <label className="block">
+          <span className="mb-2 block text-[11px] font-semibold tracking-[0.14em] text-sgraph uppercase">
+            Phone on the booking
+          </span>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+971 50 123 4567"
+            autoComplete="tel"
+            inputMode="tel"
+            type="tel"
+            className="w-full rounded-[16px] border border-bord bg-ivory px-4 py-3.5 text-[16px] text-graph outline-none placeholder:text-[15px] placeholder:text-sgraph/70 focus:border-fresh/45 focus:bg-paper focus:shadow-[0_0_0_3px_rgba(62,142,104,0.12)]"
+            aria-label="Phone number used for the booking"
           />
         </label>
 
@@ -140,9 +158,7 @@ function assignmentLabel(status?: string | null) {
 }
 
 function AuthenticatedTrip() {
-  const { accessToken, bookingId, znCode, logout, refreshSession, loginWithZn } =
-    useAuth()
-  const [rebinding, setRebinding] = useState(false)
+  const { accessToken, bookingId, znCode, logout, refreshSession } = useAuth()
   const homeQ = useQuery({
     queryKey: ['client-portal', 'home', bookingId, accessToken],
     queryFn: () => clientPortalApi.home(accessToken!),
@@ -168,30 +184,12 @@ function AuthenticatedTrip() {
         (bookingId && home.bookingId && home.bookingId !== bookingId)),
   )
 
-  // Old API / stale token → home is another ZN. Re-bind session to the badge ZN.
+  // A stale session pointing at another ZN must sign in again.
   useEffect(() => {
-    if (!sessionMismatch || !znCode || rebinding) return
-    let cancelled = false
-    setRebinding(true)
-    void (async () => {
-      try {
-        await loginWithZn(znCode)
-        if (!cancelled) {
-          await Promise.all([homeQ.refetch(), itinQ.refetch()])
-        }
-      } catch {
-        if (!cancelled) await logout()
-      } finally {
-        if (!cancelled) setRebinding(false)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionMismatch, znCode])
+    if (sessionMismatch) void logout()
+  }, [sessionMismatch, logout])
 
-  if (homeQ.isLoading || itinQ.isLoading || rebinding || sessionMismatch) {
+  if (homeQ.isLoading || itinQ.isLoading || sessionMismatch) {
     return <LoadingBlock fill />
   }
   if (homeQ.isError) {
@@ -204,7 +202,7 @@ function AuthenticatedTrip() {
       <ErrorBlock
         message={
           looksAuth
-            ? 'Session expired — sign in again with your ZN code.'
+            ? 'Session expired — sign in again with your ZN code and phone.'
             : msg
         }
         onRetry={() => {
