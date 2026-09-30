@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/shared/auth/AuthContext'
 import {
@@ -83,11 +83,14 @@ export function BookingRequestPage() {
     )
   }
 
+  // Narrowed for closures (submit) — TS does not keep the guard inside nested fns.
+  const catalog = payload
+
   const requestedItem: CustomerRequestedItem = {
-    kind: mapKind(payload.kind),
-    vendorId: payload.itemId,
-    title: payload.title,
-    detail: payload.detail ?? undefined,
+    kind: mapKind(catalog.kind),
+    vendorId: catalog.itemId,
+    title: catalog.title,
+    detail: catalog.detail ?? undefined,
     serviceDate: form.arrivalDate || undefined,
     quantity: 1,
   }
@@ -141,9 +144,9 @@ export function BookingRequestPage() {
           source: 'customer_web',
           requestedItems: [requestedItem],
           context: {
-            from: payload.context?.from,
-            to: payload.context?.to,
-            dateLabel: payload.context?.date,
+            from: catalog.context?.from,
+            to: catalog.context?.to,
+            dateLabel: catalog.context?.date,
           },
         },
         accessToken,
