@@ -906,7 +906,7 @@ export function AloBookingModule({
     }
     if (lower.includes('hotel') || lower.includes('stay') || lower.includes('hostel')) {
       navigate(
-        `/stays?q=${encodeURIComponent(q)}&people=${people}&date=${encodeURIComponent(dateFromIso)}&dateTo=${encodeURIComponent(dateToIso)}`,
+        `/hotels?people=${people}&checkIn=${encodeURIComponent(dateFromIso)}&checkOut=${encodeURIComponent(dateToIso > dateFromIso ? dateToIso : addDays(dateFromIso, 1))}`,
       )
       return
     }
@@ -916,14 +916,21 @@ export function AloBookingModule({
   const showOptions = () => {
     const params = new URLSearchParams()
     params.set('people', String(people))
-    params.set('date', dateFromIso)
-    params.set('dateTo', dateToIso)
-    params.set('from', from)
-    if (to) params.set('to', to)
-    const qs = `?${params.toString()}`
-    if (mode === 'move') navigate(`/cars${qs}`)
-    else if (mode === 'stay') navigate(`/stays${qs}`)
-    else navigate(`/acts${qs}`)
+    if (mode === 'move') {
+      params.set('date', dateFromIso)
+      params.set('from', from)
+      if (to) params.set('to', to)
+      params.set('service', /airport/i.test(`${from} ${to}`) ? 'airport' : 'hourly')
+      navigate(`/transport?${params}`)
+      return
+    }
+    params.set('checkIn', dateFromIso)
+    if (mode === 'stay') {
+      params.set('checkOut', dateToIso > dateFromIso ? dateToIso : addDays(dateFromIso, 1))
+      navigate(`/hotels?${params}`)
+    } else {
+      navigate(`/experiences?${params}`)
+    }
   }
 
   const peopleLabel = `${people} ${people === 1 ? 'person' : 'people'}`
@@ -1224,7 +1231,7 @@ export function AloBookingModule({
                   `/cars?q=${encodeURIComponent(chip)}&people=${people}&date=${encodeURIComponent(dateFromIso)}&dateTo=${encodeURIComponent(dateToIso)}&from=${encodeURIComponent(from)}`,
                 )
               } else if (lower.includes('train')) {
-                navigate('/train')
+                navigate('/trains')
               } else {
                 navigate(`/search?q=${encodeURIComponent(chip)}`)
               }

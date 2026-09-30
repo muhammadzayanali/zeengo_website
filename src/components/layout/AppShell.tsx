@@ -5,6 +5,7 @@ import { BottomNav } from '../navigation/Nav'
 import { LanguageMenu } from './LanguageMenu'
 import { PageTransition } from './PageTransition'
 import { BrandMark } from '@/components/ui/BrandMark'
+import { AddedToTripToast, TripBagButton } from '@/components/booking/BookingUi'
 
 /**
  * Desktop = full-width website (header + max-width content).
@@ -26,11 +27,15 @@ export function AppShell() {
             {t('brand')}
           </p>
         </Link>
-        <LanguageMenu compact />
+        <div className="flex items-center gap-2">
+          <TripBagButton className="min-h-9 px-2.5" />
+          <LanguageMenu compact />
+        </div>
       </div>
       <main className="mx-auto w-full max-w-6xl px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-2 md:px-6 md:pb-12 md:pt-4">
         <PageTransition />
       </main>
+      <AddedToTripToast />
       <BottomNav />
     </div>
   )

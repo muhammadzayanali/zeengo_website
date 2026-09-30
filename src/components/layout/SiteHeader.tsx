@@ -4,6 +4,7 @@ import { DesktopNav } from '../navigation/Nav'
 import { useAuth } from '@/shared/auth/AuthContext'
 import { LanguageMenu } from './LanguageMenu'
 import { BrandMark } from '@/components/ui/BrandMark'
+import { TripBagButton } from '@/components/booking/BookingUi'
 
 export function SiteHeader() {
   const { t } = useTranslation()
@@ -26,6 +27,7 @@ export function SiteHeader() {
         <DesktopNav />
         <div className="flex items-center gap-2">
           <LanguageMenu />
+          <TripBagButton />
           <Link
             to="/search"
             className="inline-flex min-h-10 items-center rounded-[13px] border border-bord bg-paper px-3 text-sm font-semibold text-graph shadow-[var(--shadow-card)]"
@@ -34,7 +36,7 @@ export function SiteHeader() {
           </Link>
           {ready && isAuthenticated ? (
             <Link
-              to="/account"
+              to="/bookings"
               className="inline-flex min-h-10 items-center gap-2 rounded-[13px] bg-emer px-3 text-sm font-semibold text-white shadow-[0_2px_8px_rgba(31,107,79,.22)]"
             >
               <BrandMark size={22} rounded="md" className="ring-1 ring-white/25" />

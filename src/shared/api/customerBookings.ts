@@ -1,12 +1,33 @@
 import { apiRequest } from './client'
 
 export type CustomerRequestedItem = {
-  kind: 'hotel' | 'activity' | 'restaurant' | 'guide' | 'car' | 'service'
+  kind:
+    | 'hotel'
+    | 'activity'
+    | 'restaurant'
+    | 'guide'
+    | 'car'
+    | 'transfer'
+    | 'train'
+    | 'service'
   vendorId?: string
   title: string
   detail?: string
   serviceDate?: string
   quantity?: number
+  roomId?: string
+  checkIn?: string
+  checkOut?: string
+  rooms?: number
+  vehicleClassId?: string
+  transferService?: 'airport' | 'hourly' | 'day'
+  hours?: number
+  trainRouteId?: string
+  trainClass?: string
+  pax?: number
+  from?: string
+  to?: string
+  time?: string
 }
 
 export type CreateCustomerBookingRequest = {

@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/shared/auth/AuthContext'
+import { useTripBag } from '@/shared/trip/TripBag'
+import type { CustomerRequestedItem } from '@/shared/api/customerBookings'
 import {
   buildActivityBookMessage,
   buildCarBookMessage,
@@ -75,6 +77,32 @@ export function buildWhatsAppMessage(
   return buildActivityBookMessage(label, znCode)
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+const DETAIL_PATH: Partial<Record<CatalogRequestPayload['kind'], string>> = {
+  stay: '/hotels',
+  activity: '/experiences',
+  guide: '/guides',
+  food: '/restaurants',
+}
+
+const REQUEST_KIND: Record<CatalogRequestPayload['kind'], CustomerRequestedItem['kind']> = {
+  stay: 'hotel',
+  activity: 'activity',
+  guide: 'guide',
+  food: 'restaurant',
+  car: 'car',
+}
+
+function detailQuery(ctx: CatalogRequestPayload['context']) {
+  const sp = new URLSearchParams()
+  if (ctx?.date) sp.set('checkIn', ctx.date)
+  if (ctx?.dateTo && ctx.dateTo !== ctx.date) sp.set('checkOut', ctx.dateTo)
+  if (ctx?.people) sp.set('people', String(ctx.people))
+  const s = sp.toString()
+  return s ? `?${s}` : ''
+}
+
 export function CatalogRequestButton({
   label,
   payload,
@@ -85,14 +113,43 @@ export function CatalogRequestButton({
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { znCode } = useAuth()
+  const { add } = useTripBag()
+
+  const request = () => {
+    const detailPath = DETAIL_PATH[payload.kind]
+    if (detailPath && payload.itemId && UUID.test(payload.itemId)) {
+      navigate(`${detailPath}/${payload.itemId}${detailQuery(payload.context)}`)
+      return
+    }
+    if (payload.kind === 'car') {
+      const sp = new URLSearchParams({ service: 'hourly' })
+      if (payload.context?.date) sp.set('date', payload.context.date)
+      if (payload.context?.people) sp.set('people', String(payload.context.people))
+      navigate(`/transport?${sp}`)
+      return
+    }
+    add({
+      request: {
+        kind: REQUEST_KIND[payload.kind],
+        title: payload.title,
+        detail: payload.detail ?? undefined,
+        serviceDate: payload.context?.date,
+        pax: payload.context?.people,
+      },
+      display: {
+        title: payload.title,
+        subtitle: payload.detail ?? payload.context?.city ?? null,
+        dateLabel: payload.context?.date ?? null,
+      },
+    })
+    navigate('/booking/details')
+  }
 
   return (
     <div className="mt-4 space-y-2">
       <button
         type="button"
-        onClick={() =>
-          navigate('/book/request', { state: { payload } })
-        }
+        onClick={request}
         className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[14px] bg-emer px-4 text-sm font-semibold text-white"
       >
         {label ?? 'Request booking'}
