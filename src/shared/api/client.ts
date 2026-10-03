@@ -4,7 +4,6 @@ import {
   getRefreshToken,
 } from '@/shared/auth/session'
 
-const FALLBACK_LOCAL = 'http://localhost:3000/api/v1'
 const FALLBACK_PRODUCTION =
   'https://zeengobackend-production-d058.up.railway.app/api/v1'
 
@@ -20,14 +19,16 @@ export function normalizeApiBase(raw: string): string {
  * Accepts origin (`http://localhost:3000`) or full `…/api/v1`.
  */
 export function getApiBaseUrl(): string {
-  const local = normalizeApiBase(
-    import.meta.env.VITE_API_BASE_URL_LOCAL || '',
+  if (import.meta.env.DEV) {
+    return (
+      normalizeApiBase(import.meta.env.VITE_API_BASE_URL_LOCAL || '') ||
+      'http://localhost:3000/api/v1'
+    )
+  }
+  return (
+    normalizeApiBase(import.meta.env.VITE_API_BASE_URL_PRODUCTION || '') ||
+    FALLBACK_PRODUCTION
   )
-  const production = normalizeApiBase(
-    import.meta.env.VITE_API_BASE_URL_PRODUCTION || '',
-  )
-  if (import.meta.env.DEV) return local || FALLBACK_LOCAL
-  return production || FALLBACK_PRODUCTION
 }
 
 /** Socket.IO namespace `/ws` — same host as the selected API base. */
@@ -37,9 +38,7 @@ export function getWsUrl(): string {
     const u = new URL(api, typeof window !== 'undefined' ? window.location.origin : undefined)
     return `${u.origin}/ws`
   } catch {
-    return import.meta.env.DEV
-      ? 'http://localhost:3000/ws'
-      : 'https://zeengobackend-production-d058.up.railway.app/ws'
+    return FALLBACK_PRODUCTION.replace(/\/api\/v1$/i, '/ws')
   }
 }
 
