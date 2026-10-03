@@ -69,7 +69,7 @@ function SignInPanel({ target }: { target?: string }) {
 
 export function MyBookingsPage() {
   const { t } = useTranslation()
-  const { ready, isAuthenticated, znCode } = useAuth()
+  const { ready, isAuthenticated } = useAuth()
   const booking = useMyBooking(ready && isAuthenticated)
 
   return (
@@ -84,25 +84,16 @@ export function MyBookingsPage() {
       ) : booking.isError || !booking.data ? (
         <ErrorBlock message={(booking.error as Error | null)?.message ?? 'Error'} onRetry={() => void booking.refetch()} />
       ) : (
-        <div className="space-y-4">
-          <Link to={`/bookings/${booking.data.znCode}`} className="block rounded-[20px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)] transition hover:shadow-[var(--shadow-lift)]">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[22px] font-bold tracking-[1px] text-graph" dir="ltr">{booking.data.znCode}</p>
-                <p className="text-[13px] text-sgraph">{booking.data.arrivalDate} → {booking.data.departureDate} · {t('book.bookings.itemsCount', { count: booking.data.items.length })}</p>
-              </div>
-              <StatusBadge booking={booking.data} />
+        <Link to={`/bookings/${booking.data.znCode}`} className="block rounded-[20px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)] transition hover:shadow-[var(--shadow-lift)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[22px] font-bold tracking-[1px] text-graph" dir="ltr">{booking.data.znCode}</p>
+              <p className="text-[13px] text-sgraph">{booking.data.arrivalDate} → {booking.data.departureDate} · {t('book.bookings.itemsCount', { count: booking.data.items.length })}</p>
             </div>
-            <p className="mt-3 text-[13px] font-bold text-forest">{t('book.bookings.open')} <span className="inline-block rtl:rotate-180">→</span></p>
-          </Link>
-          <details className="rounded-[20px] border border-bord bg-paper p-4">
-            <summary className="cursor-pointer text-[14px] font-semibold text-graph">{t('book.bookings.switch')}</summary>
-            <p className="mt-2 text-[12.5px] text-sgraph">{t('book.bookings.signedInAs', { zn: znCode })}</p>
-            <div className="mt-3">
-              <ZnLoginForm compact />
-            </div>
-          </details>
-        </div>
+            <StatusBadge booking={booking.data} />
+          </div>
+          <p className="mt-3 text-[13px] font-bold text-forest">{t('book.bookings.open')} <span className="inline-block rtl:rotate-180">→</span></p>
+        </Link>
       )}
     </div>
   )
