@@ -157,6 +157,84 @@ function assignmentLabel(status?: string | null) {
   }
 }
 
+function formatBytes(size: number) {
+  if (size < 1024) return `${size} B`
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function TripDocuments({ accessToken }: { accessToken: string }) {
+  const docsQ = useQuery({
+    queryKey: ['client-portal', 'documents', accessToken],
+    queryFn: () => clientPortalApi.documents(accessToken),
+    enabled: Boolean(accessToken),
+    retry: 1,
+  })
+
+  if (docsQ.isLoading) {
+    return (
+      <div className="rounded-[16px] border border-bord bg-paper px-4 py-3 text-sm text-sgraph">
+        Loading trip documents…
+      </div>
+    )
+  }
+  if (docsQ.isError) {
+    return (
+      <div className="rounded-[16px] border border-bord bg-paper px-4 py-3">
+        <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+          Documents
+        </p>
+        <p className="mt-1 text-sm text-sgraph">Could not load documents.</p>
+        <button
+          type="button"
+          className="mt-2 text-sm font-semibold text-emer"
+          onClick={() => void docsQ.refetch()}
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
+  const docs = docsQ.data ?? []
+  if (docs.length === 0) return null
+
+  return (
+    <div className="rounded-[16px] border border-bord bg-paper px-4 py-3">
+      <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+        Documents
+      </p>
+      <ul className="mt-2 space-y-2">
+        {docs.map((doc) => (
+          <li
+            key={doc.id}
+            className="flex items-center justify-between gap-3"
+          >
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-graph">
+                {doc.originalName}
+              </p>
+              <p className="text-[12px] text-sgraph">
+                {doc.category.replace(/_/g, ' ')} · {formatBytes(doc.size)}
+              </p>
+            </div>
+            <button
+              type="button"
+              className="shrink-0 rounded-[13px] border border-bord bg-mist px-3 py-1.5 text-sm font-semibold text-forest"
+              onClick={() =>
+                void clientPortalApi
+                  .downloadDocument(accessToken, doc.id, doc.originalName)
+                  .catch(() => undefined)
+              }
+            >
+              View
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function AuthenticatedTrip() {
   const { accessToken, bookingId, znCode, logout, refreshSession } = useAuth()
   const homeQ = useQuery({
@@ -404,6 +482,8 @@ function AuthenticatedTrip() {
               </>
             )}
           </div>
+
+          <TripDocuments accessToken={accessToken!} />
 
           <EditRequestPanel home={home} compact />
 

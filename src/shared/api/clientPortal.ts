@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiRequest } from '../api/client'
+import { apiGet, apiPost, apiRequest, getApiBaseUrl } from '../api/client'
 import type { ClientUser } from '../auth/session'
 
 export type ZnLoginResult = {
@@ -87,6 +87,19 @@ export type ClientItinerary = {
   }>
 }
 
+export type ClientDocument = {
+  id: string
+  bookingId: string
+  name: string
+  originalName: string
+  mimeType: string
+  size: number
+  category: string
+  description: string | null
+  createdAt: string
+  uploadedByName: string | null
+}
+
 export type ClientEditRequest = {
   id: string
   type: string
@@ -139,6 +152,24 @@ export const clientPortalApi = {
       `/bookings/${bookingId}/edit-requests`,
       accessToken,
     ),
+  documents: (accessToken: string) =>
+    apiGet<ClientDocument[]>('/client/documents', accessToken),
+  downloadDocument: async (accessToken: string, id: string, filename: string) => {
+    const res = await fetch(
+      `${getApiBaseUrl()}/client/documents/${id}/download`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    )
+    if (!res.ok) {
+      throw new Error('Could not download this document')
+    }
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  },
   createEditRequest: (
     accessToken: string,
     body: {
