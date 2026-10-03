@@ -89,9 +89,20 @@ function HomeBody({
   const moreStays = hotels.slice(1)
   const acts =
     catalogActs.length > 0
-      ? catalogActs.slice(0, 4)
-      : (data.featuredActivities ?? []).slice(0, 4)
-  const actIsListing = catalogActs.length > 0
+      ? catalogActs.slice(0, 4).map((p) => ({
+          id: p.id,
+          title: p.title,
+          subtitle: p.area || p.city || p.subtitle,
+          imageUrl: p.imageUrl || p.images[0] || null,
+          to: `/experiences/${encodeURIComponent(p.id)}`,
+        }))
+      : (data.featuredActivities ?? []).slice(0, 4).map((p) => ({
+          id: String(p.id),
+          title: p.title,
+          subtitle: p.area || p.subtitle,
+          imageUrl: p.imageUrl,
+          to: `/places/${encodeURIComponent(String(p.id))}`,
+        }))
   const now = (data.moscowNow ?? []).slice(0, 4)
   const centre = (data.closeToCentre ?? []).slice(0, 3)
   const first = (data.firstTime ?? []).slice(0, 3)
@@ -264,23 +275,11 @@ function HomeBody({
             <CardRail>
               {acts.map((p) => (
                 <PlaceCard
-                  key={String(p.id)}
-                  to={
-                    actIsListing
-                      ? `/experiences/${encodeURIComponent(String(p.id))}`
-                      : `/places/${encodeURIComponent(String(p.id))}`
-                  }
+                  key={p.id}
+                  to={p.to}
                   title={p.title}
-                  subtitle={
-                    'city' in p
-                      ? p.area || p.city || p.subtitle
-                      : p.area || p.subtitle
-                  }
-                  imageUrl={
-                    'images' in p
-                      ? p.imageUrl || p.images[0]
-                      : p.imageUrl
-                  }
+                  subtitle={p.subtitle}
+                  imageUrl={p.imageUrl}
                 />
               ))}
             </CardRail>
