@@ -513,7 +513,7 @@ function Field({
       </span>
       <span className="min-w-0">
         <span
-          className={`block text-[10px] font-semibold tracking-[0.14em] uppercase ${
+          className={`block text-[11px] ${
             active ? 'text-emer' : 'text-sgraph'
           }`}
         >
@@ -541,7 +541,7 @@ function Field({
       </span>
       <span className="min-w-0 flex-1">
         <span
-          className={`block text-[10px] font-semibold tracking-[0.12em] uppercase ${
+          className={`block text-[11px] ${
             active ? 'text-emer' : 'text-sgraph'
           }`}
         >
@@ -1091,7 +1091,7 @@ export function AloBookingModule({
   const moveFields = (desktop?: boolean) => (
     <>
       <Field
-        label="FROM"
+        label="From"
         icon="nav"
         value={from}
         desktop={desktop}
@@ -1101,7 +1101,7 @@ export function AloBookingModule({
         panel={fromPanel}
       />
       <Field
-        label="TO"
+        label="To"
         icon="pin"
         value={to || 'Choose a destination'}
         muted={!to}
@@ -1117,7 +1117,7 @@ export function AloBookingModule({
   const stayFields = (desktop?: boolean) => (
     <>
       <Field
-        label="WHERE"
+        label="Where"
         icon="pin"
         value={to || 'Moscow centre'}
         desktop={desktop}
@@ -1127,7 +1127,7 @@ export function AloBookingModule({
         panel={toPanel}
       />
       <Field
-        label="CHECK-IN"
+        label="Check-in"
         icon="cal"
         value={date}
         desktop={desktop}
@@ -1142,7 +1142,7 @@ export function AloBookingModule({
   const doFields = (desktop?: boolean) => (
     <>
       <Field
-        label="WHAT"
+        label="What"
         icon="ticket"
         value={to || 'Things to do today'}
         desktop={desktop}
@@ -1152,7 +1152,7 @@ export function AloBookingModule({
         panel={toPanel}
       />
       <Field
-        label="AREA"
+        label="Area"
         icon="pin"
         value={from.includes('location') ? 'Near Red Square' : from}
         desktop={desktop}
@@ -1168,7 +1168,7 @@ export function AloBookingModule({
     <>
       {mode === 'move' || mode === 'do' ? (
         <Field
-          label="DATE"
+          label="When"
           icon="cal"
           value={date}
           desktop={desktop}
@@ -1179,7 +1179,7 @@ export function AloBookingModule({
         />
       ) : null}
       <Field
-        label="PEOPLE"
+        label="Guests"
         icon="people"
         value={peopleLabel}
         desktop={desktop}
@@ -1194,7 +1194,7 @@ export function AloBookingModule({
   return (
     <section className="space-y-4 md:space-y-6">
       <form onSubmit={onSearch} className="flex items-center gap-2.5 md:gap-3">
-        <label className="flex min-h-[52px] flex-1 items-center gap-3 rounded-[18px] border border-bord bg-paper px-4 shadow-[var(--shadow-card)] transition focus-within:border-fresh/40 focus-within:shadow-[var(--shadow-lift)] md:min-h-[58px] md:rounded-[20px] md:px-5">
+        <label className="flex min-h-[52px] flex-1 items-center gap-3 rounded-full border border-bord bg-paper px-5 transition focus-within:border-champ/70 md:min-h-[56px] md:px-6">
           <span className="text-emer">
             <Icon name="search" className="h-[18px] w-[18px] md:h-5 md:w-5" />
           </span>
@@ -1208,7 +1208,7 @@ export function AloBookingModule({
         </label>
         <Link
           to="/trip"
-          className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-[16px] bg-mint text-forest transition hover:bg-[#cfe6db] md:h-[58px] md:w-[58px] md:rounded-[18px]"
+          className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-bord bg-paper text-forest transition hover:border-champ/70 md:h-[56px] md:w-[56px]"
           aria-label="Ask the desk"
           title="Arabic-speaking desk"
         >
@@ -1236,21 +1236,21 @@ export function AloBookingModule({
                 navigate(`/search?q=${encodeURIComponent(chip)}`)
               }
             }}
-            className="shrink-0 rounded-full border border-bord bg-paper px-3.5 py-2 text-[12.5px] font-medium text-sgraph shadow-[var(--shadow-card)] transition hover:border-fresh/35 hover:bg-mist hover:text-forest md:text-[13px]"
+            className="shrink-0 rounded-full border border-transparent px-1 py-1.5 text-[13px] text-sgraph underline-offset-4 transition hover:text-forest hover:underline md:text-[14px]"
           >
             {chip}
           </button>
         ))}
       </div>
 
-      <div className="flex justify-between gap-1 pt-0.5 md:justify-start md:gap-5">
+      <div className="flex justify-between gap-1 pt-0.5 md:hidden">
         {CATEGORIES.map((c) => (
           <Link
             key={c.id}
             to={c.to}
             className="group flex w-[64px] flex-col items-center gap-1.5 md:w-auto md:min-w-[88px]"
           >
-            <span className="flex h-[54px] w-[54px] items-center justify-center rounded-full border border-bord bg-paper text-graph shadow-[var(--shadow-card)] transition group-hover:border-fresh/40 group-hover:bg-mist group-hover:text-emer md:h-[60px] md:w-[60px]">
+            <span className="flex h-[48px] w-[48px] items-center justify-center text-forest transition group-hover:text-emer md:h-[52px] md:w-[52px]">
               <Icon name={c.icon} className="h-[22px] w-[22px]" />
             </span>
             <span className="text-[11.5px] font-medium text-graph md:text-[12.5px]">
@@ -1261,7 +1261,7 @@ export function AloBookingModule({
       </div>
 
       {/* Mobile booking card */}
-      <div className="relative overflow-hidden rounded-[24px] border border-bord bg-paper shadow-[var(--shadow-card)] md:hidden">
+      <div className="relative overflow-hidden rounded-[16px] border border-bord bg-paper md:hidden">
         <div className="border-b border-bord p-1.5">
           <ModeTabs mode={mode} setMode={setMode} />
         </div>
@@ -1289,7 +1289,7 @@ export function AloBookingModule({
       </div>
 
       {/* Desktop booking bar — dropdown portals under the field (no layout stretch). */}
-      <div className="relative hidden overflow-hidden rounded-[24px] border border-bord bg-paper shadow-[var(--shadow-lift)] md:block">
+      <div className="relative hidden overflow-hidden rounded-[16px] border border-bord bg-paper md:block">
         <div className="flex items-center justify-between gap-4 border-b border-bord px-4 py-3">
           <ModeTabs mode={mode} setMode={setMode} />
           <p className="hidden text-[13px] text-sgraph lg:block">
@@ -1308,7 +1308,7 @@ export function AloBookingModule({
               <>
                 {stayFields(true)}
                 <Field
-                  label="PEOPLE"
+                  label="Guests"
                   icon="people"
                   value={peopleLabel}
                   desktop

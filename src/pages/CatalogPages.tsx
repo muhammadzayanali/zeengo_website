@@ -225,7 +225,7 @@ export function CarsPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         Cars with a driver
       </h1>
       <TripSummary query={query} />
@@ -234,21 +234,21 @@ export function CarsPage() {
         confirms on My trip. Driver chat unlocks after they accept.
       </p>
 
-      <SectionHeader title="Available drivers" eyebrow="DB" />
+      <SectionHeader title="Available drivers" />
       {drivers.length === 0 ? (
         <EmptyBlock
           title="No live drivers yet"
           body="Driver profiles in Postgres will appear here when status is available."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
           {drivers.map((c) => (
             <DriverCard key={c.id} item={c} query={query} />
           ))}
         </div>
       )}
 
-      <SectionHeader title="Vehicle classes" eyebrow="Move" />
+      <SectionHeader title="Vehicle classes" />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {classes.map((c) => (
           <DriverCard key={c.id} item={c} query={query} />
@@ -262,10 +262,10 @@ export function CarsPage() {
 
 function DriverCard({ item, query }: { item: CarItem; query: CatalogQuery }) {
   return (
-    <div className="flex flex-col rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)]">
+    <div className="flex flex-col border-b border-bord/80 py-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[15px] font-bold text-graph">{item.title}</p>
+          <p className="font-display text-[18px] font-medium text-graph">{item.title}</p>
           <p className="mt-1 text-[12.5px] text-sgraph">{item.subtitle}</p>
         </div>
         {item.priceLabel ? (
@@ -322,7 +322,7 @@ export function StaysCatalogPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         Stays
       </h1>
       <TripSummary query={query} />
@@ -341,14 +341,14 @@ export function StaysCatalogPage() {
         onPage={(page) => setFilter({ page })}
       />
 
-      <SectionHeader title="Hotels & hostels" eyebrow="Catalog" />
+      <SectionHeader title="Hotels & hostels" />
       {data.data.length === 0 ? (
         <EmptyBlock
           title="No hotels match"
           body="Try another city or clear search."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
           {data.data.map((h) => (
             <HotelCard key={h.id} item={h} query={query} />
           ))}
@@ -361,11 +361,11 @@ export function StaysCatalogPage() {
 
 function HotelCard({ item, query }: { item: HotelItem; query: CatalogQuery }) {
   return (
-    <div className="flex flex-col rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)]">
-      <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+    <div className="flex flex-col border-b border-bord/80 py-4">
+      <p className="text-[12.5px] text-champ">
         {item.city}
       </p>
-      <p className="mt-1 text-[15px] font-bold text-graph">{item.title}</p>
+      <p className="font-display mt-1 text-[18px] font-medium text-graph">{item.title}</p>
       <p className="mt-1 text-[12.5px] leading-snug text-sgraph">
         {item.subtitle}
       </p>
@@ -408,7 +408,7 @@ export function ActivitiesCatalogPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         Things to do
       </h1>
       <TripSummary query={query} />
@@ -427,14 +427,14 @@ export function ActivitiesCatalogPage() {
         onPage={(page) => setFilter({ page })}
       />
 
-      <SectionHeader title="Activities" eyebrow="Catalog" />
+      <SectionHeader title="Activities" />
       {data.data.length === 0 ? (
         <EmptyBlock
           title="No activities match"
           body="Try another city or clear search."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
           {data.data.map((a) => (
             <ActivityCard key={a.id} item={a} />
           ))}
@@ -447,11 +447,11 @@ export function ActivitiesCatalogPage() {
 
 function ActivityCard({ item }: { item: ActivityItem }) {
   return (
-    <div className="flex flex-col rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)]">
-      <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+    <div className="flex flex-col border-b border-bord/80 py-4">
+      <p className="text-[12.5px] text-champ">
         {item.city}
       </p>
-      <p className="mt-1 text-[15px] font-bold text-graph">{item.title}</p>
+      <p className="font-display mt-1 text-[18px] font-medium text-graph">{item.title}</p>
       <p className="mt-1 text-[12.5px] leading-snug text-sgraph">
         {item.subtitle}
       </p>
@@ -489,7 +489,7 @@ export function GuidesCatalogPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         Guides
       </h1>
       <TripSummary query={query} />
@@ -507,14 +507,14 @@ export function GuidesCatalogPage() {
         onPage={(page) => setFilter({ page })}
       />
 
-      <SectionHeader title="Arabic-speaking guides" eyebrow="Catalog" />
+      <SectionHeader title="Arabic-speaking guides" />
       {data.data.length === 0 ? (
         <EmptyBlock
           title="No guides match"
           body="Try another city or clear search."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
           {data.data.map((g) => (
             <GuideCard key={g.id} item={g} />
           ))}
@@ -527,11 +527,11 @@ export function GuidesCatalogPage() {
 
 function GuideCard({ item }: { item: GuideItem }) {
   return (
-    <div className="flex flex-col rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)]">
-      <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+    <div className="flex flex-col border-b border-bord/80 py-4">
+      <p className="text-[12.5px] text-champ">
         {item.city}
       </p>
-      <p className="mt-1 text-[15px] font-bold text-graph">{item.title}</p>
+      <p className="font-display mt-1 text-[18px] font-medium text-graph">{item.title}</p>
       <p className="mt-1 text-[12.5px] leading-snug text-sgraph">
         {item.subtitle}
       </p>
@@ -574,7 +574,7 @@ export function FoodCatalogPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         Where to eat
       </h1>
       <TripSummary query={query} />
@@ -593,11 +593,11 @@ export function FoodCatalogPage() {
         onPage={(page) => setFilter({ page })}
       />
 
-      <SectionHeader title="Restaurants" eyebrow="DB" />
+      <SectionHeader title="Restaurants" />
       {vendors.length === 0 ? (
         <EmptyBlock title="No restaurants" body="Add Vendor type=restaurant." />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
           {vendors.map((r) => (
             <RestaurantCard key={r.id} item={r} />
           ))}
@@ -606,8 +606,8 @@ export function FoodCatalogPage() {
 
       {places.length ? (
         <>
-          <SectionHeader title="Curated food spots" eyebrow="Discovery" />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <SectionHeader title="Curated food spots" />
+          <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
             {places.map((r) => (
               <PlaceCard
                 key={r.id}
@@ -627,7 +627,7 @@ export function FoodCatalogPage() {
 
 function RestaurantCard({ item }: { item: RestaurantItem }) {
   return (
-    <div className="flex flex-col rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)]">
+    <div className="flex flex-col border-b border-bord/80 py-4">
       <div className="flex items-start justify-between gap-2">
         <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
           {item.city}
@@ -673,7 +673,7 @@ export function SearchCatalogPage() {
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px]">Search</h1>
+      <h1 className="font-display text-[32px] font-medium">Search</h1>
       <p className="mt-2 text-sm text-sgraph">
         Search stays, activities, guides, food, and places from the database.
       </p>

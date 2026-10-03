@@ -23,9 +23,7 @@ export function AppShell() {
       <div className="flex items-center justify-between gap-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] md:hidden">
         <Link to="/" className="flex items-center gap-2">
           <BrandMark size={28} rounded="md" />
-          <p className="text-[11px] font-bold tracking-[0.18em] text-emer uppercase">
-            {t('brand')}
-          </p>
+          <p className="text-[12px] text-emer">{t('brand')}</p>
         </Link>
         <div className="flex items-center gap-2">
           <TripBagButton className="min-h-9 px-2.5" />

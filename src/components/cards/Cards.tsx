@@ -27,45 +27,47 @@ export function PlaceCard({
       to={to}
       className={
         isGrid
-          ? 'group flex w-full min-w-0 flex-col overflow-hidden rounded-[18px] border border-bord bg-paper shadow-[var(--shadow-card)] transition hover:shadow-[var(--shadow-lift)]'
-          : 'group flex min-w-[172px] max-w-[220px] shrink-0 flex-col overflow-hidden rounded-[18px] border border-bord bg-paper shadow-[var(--shadow-card)] transition hover:shadow-[var(--shadow-lift)] md:max-w-none md:min-w-0'
+          ? 'group flex w-full min-w-0 flex-col'
+          : 'group flex min-w-[168px] max-w-[210px] shrink-0 flex-col md:max-w-none md:min-w-0'
       }
     >
-      <div
-        className={
-          isGrid
-            ? 'relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-mist via-[#e8f3ed] to-mint sm:aspect-[16/11]'
-            : 'relative h-[116px] overflow-hidden bg-gradient-to-br from-mist via-[#e8f3ed] to-mint md:h-40'
-        }
-      >
-        {showImg ? (
+      {showImg ? (
+        <div
+          className={
+            isGrid
+              ? 'relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#d8d0c2] sm:aspect-[5/6]'
+              : 'relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#d8d0c2]'
+          }
+        >
           <img
             src={imageUrl!}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
             loading="lazy"
             referrerPolicy="no-referrer"
             onError={() => setBroken(true)}
           />
-        ) : (
-          <div className="flex h-full w-full items-end p-3">
-            <span className="text-[11px] font-semibold tracking-wide text-forest/55 uppercase">
-              aLo
+          {badge ? (
+            <span className="absolute bottom-2.5 left-2.5 rounded-full bg-ivory/92 px-2.5 py-1 text-[11px] text-forest backdrop-blur-sm">
+              {badge}
             </span>
-          </div>
-        )}
-        {badge ? (
-          <span className="absolute top-2 right-2 rounded-2xl bg-mint px-2 py-1 text-[10px] font-extrabold text-forest">
-            {badge}
-          </span>
-        ) : null}
-      </div>
-      <div className="p-3">
-        <p className="line-clamp-2 text-sm font-bold leading-snug text-graph group-hover:text-emer">
+          ) : null}
+        </div>
+      ) : (
+        <div className="relative flex min-h-[92px] items-end rounded-[4px] border-b border-champ/50 pb-2">
+          {badge ? (
+            <span className="absolute top-0 right-0 text-[11px] text-champ">{badge}</span>
+          ) : null}
+        </div>
+      )}
+      <div className="pt-2.5">
+        <p className="font-display line-clamp-2 text-[16px] leading-snug font-medium text-graph group-hover:text-emer">
           {title}
         </p>
         {subtitle ? (
-          <p className="mt-1 line-clamp-2 text-[11px] text-sgraph">{subtitle}</p>
+          <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-sgraph">
+            {subtitle}
+          </p>
         ) : null}
       </div>
     </Link>
@@ -74,7 +76,7 @@ export function PlaceCard({
 
 export function CardRail({ children }: { children: React.ReactNode }) {
   return (
-    <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 scrollbar-none md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 lg:grid-cols-4">
+    <div className="-mx-4 flex gap-3.5 overflow-x-auto px-4 pb-1 scrollbar-none md:mx-0 md:grid md:grid-cols-3 md:gap-x-5 md:gap-y-8 md:overflow-visible md:px-0 lg:grid-cols-4">
       {children}
     </div>
   )
@@ -94,42 +96,24 @@ export function ServiceTile({
   return (
     <Link
       to={to}
-      className={`flex min-h-[122px] flex-col items-start gap-3 rounded-[18px] border border-bord p-4 shadow-[var(--shadow-card)] transition hover:shadow-[var(--shadow-lift)] active:scale-[0.98] ${
-        dark ? 'bg-forest text-mint' : 'bg-paper text-graph'
+      className={`flex min-h-[108px] flex-col items-start justify-end gap-1 rounded-[12px] px-4 py-4 transition ${
+        dark
+          ? 'bg-forest text-mint'
+          : 'border border-bord/80 bg-paper text-graph'
       }`}
     >
-      <span
-        className={`flex h-11 w-11 items-center justify-center rounded-[13px] ${
-          dark ? 'bg-white/10' : 'bg-mint'
-        }`}
-      >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke={dark ? '#DDEDE5' : '#1F6B4F'}
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          aria-hidden
+      <span className="font-display text-[18px] font-medium tracking-[-0.2px]">
+        {title}
+      </span>
+      {subtitle ? (
+        <span
+          className={`text-[12.5px] leading-snug ${
+            dark ? 'text-white/70' : 'text-sgraph'
+          }`}
         >
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
-      </span>
-      <span>
-        <span className="block text-[14.5px] font-semibold tracking-[-0.15px]">
-          {title}
+          {subtitle}
         </span>
-        {subtitle ? (
-          <span
-            className={`mt-0.5 block text-[11.5px] leading-snug ${
-              dark ? 'text-white/70' : 'text-sgraph'
-            }`}
-          >
-            {subtitle}
-          </span>
-        ) : null}
-      </span>
+      ) : null}
     </Link>
   )
 }

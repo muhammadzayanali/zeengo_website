@@ -10,14 +10,12 @@ export function SectionHeader({
   eyebrow?: string
 }) {
   return (
-    <div className="mb-3 flex items-end justify-between gap-3 pt-6 md:pt-8">
+    <div className="mb-4 flex items-end justify-between gap-3 pt-8 md:pt-10">
       <div>
         {eyebrow ? (
-          <p className="mb-1 text-[10.5px] font-semibold tracking-[0.12em] text-emer uppercase">
-            {eyebrow}
-          </p>
+          <p className="mb-1 text-[12px] text-champ">{eyebrow}</p>
         ) : null}
-        <h2 className="text-[21px] font-bold tracking-[-0.35px] text-graph md:text-2xl">
+        <h2 className="font-display text-[24px] leading-tight font-medium text-graph md:text-[28px]">
           {title}
         </h2>
       </div>
@@ -39,10 +37,10 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-[11px] border px-3 py-2 text-[11px] font-semibold tracking-[0.04em] uppercase transition ${
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12.5px] transition ${
         active
-          ? 'border-[#cfe3d9] bg-mint text-forest'
-          : 'border-bord bg-mist text-sgraph'
+          ? 'border-forest bg-forest text-ivory'
+          : 'border-bord bg-paper text-sgraph hover:border-champ/60 hover:text-graph'
       }`}
     >
       {children}
@@ -66,7 +64,7 @@ export function PrimaryButton({
   return (
     <button
       type="button"
-      className={`inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-[16px] bg-emer px-5 text-[15.5px] font-semibold text-white shadow-[0_2px_8px_rgba(31,107,79,.22)] transition hover:bg-[#1b5f46] active:scale-[0.98] disabled:opacity-50 md:w-auto md:px-8 ${className}`}
+      className={`inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-emer px-6 text-[15px] font-medium text-white transition hover:bg-forest active:scale-[0.99] disabled:opacity-50 md:w-auto md:px-8 ${className}`}
       {...props}
     >
       {children}
@@ -84,8 +82,8 @@ export function EmptyBlock({
   body?: string
 }) {
   return (
-    <div className="rounded-[20px] border border-bord bg-paper p-8 text-center shadow-[var(--shadow-card)]">
-      <p className="text-[17px] font-semibold text-graph">{title}</p>
+    <div className="border-y border-bord bg-paper/70 px-2 py-10 text-center">
+      <p className="font-display text-[20px] font-medium text-graph">{title}</p>
       {body ? <p className="mt-2 text-sm text-sgraph">{body}</p> : null}
     </div>
   )
@@ -99,13 +97,13 @@ export function ErrorBlock({
   onRetry?: () => void
 }) {
   return (
-    <div className="rounded-[20px] border border-[#F0CFCA] bg-[#FBEAE8] p-6 text-center">
-      <p className="text-sm font-semibold text-[#C0392B]">{message}</p>
+    <div className="border-y border-[#E8C8C2] bg-[#FBEAE8]/70 px-2 py-8 text-center">
+      <p className="text-sm font-medium text-[#C0392B]">{message}</p>
       {onRetry ? (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 text-sm font-bold text-forest underline"
+          className="mt-3 text-sm font-medium text-forest underline"
         >
           Try again
         </button>

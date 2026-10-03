@@ -51,7 +51,7 @@ export function PlacesPage({
 
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px] text-graph">
+      <h1 className="font-display text-[32px] font-medium text-graph">
         {title}
       </h1>
       <p className="mt-2 text-sm text-sgraph">
@@ -160,11 +160,11 @@ export function PlaceDetailPage({ id }: { id: string }) {
         </div>
         <div className="p-5 md:p-6">
           {p.category ? (
-            <p className="text-[11px] font-bold tracking-wide text-emer uppercase">
+            <p className="text-[13px] text-champ">
               {p.category}
             </p>
           ) : null}
-          <h1 className="mt-1 text-2xl font-bold text-graph md:text-3xl">
+          <h1 className="font-display mt-1 text-[28px] font-medium text-graph md:text-[34px]">
             {p.title}
           </h1>
           {p.area ? <p className="mt-2 text-sgraph">{p.area}</p> : null}

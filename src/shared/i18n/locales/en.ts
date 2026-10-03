@@ -33,7 +33,7 @@ export const en = {
   home: {
     whereToday: 'Where to today?',
     heroBody:
-      'Arabic-speaking guide to Moscow — stays, things to do, transfers, and live rouble rates.',
+      'Stays, a car with a driver, someone who speaks Arabic, and the rouble as it stands today — arranged the way a local desk would.',
     services: 'Services',
     moscowNow: 'Moscow right now',
     closeCentre: 'Close to the centre',

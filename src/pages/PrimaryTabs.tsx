@@ -139,7 +139,7 @@ export function AroundPage() {
 
   return (
     <div>
-      <h1 className="text-[32px] leading-[1.15] font-bold tracking-[-0.45px] text-graph md:text-[30px]">
+      <h1 className="font-display text-[32px] leading-[1.15] font-medium text-graph md:text-[34px]">
         Around me
       </h1>
       <p className="mt-2 text-sm text-sgraph">
@@ -323,7 +323,7 @@ export function ExplorePage() {
 
   return (
     <div>
-      <h1 className="text-[32px] leading-[1.12] font-bold tracking-[-0.45px] text-graph md:text-[36px]">
+      <h1 className="font-display text-[32px] leading-[1.12] font-medium text-graph md:text-[38px]">
         Explore Russia
       </h1>
       <p className="mt-2 text-sm text-sgraph">

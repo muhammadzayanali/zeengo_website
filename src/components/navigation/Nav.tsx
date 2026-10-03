@@ -113,10 +113,10 @@ export function DesktopNav() {
           to={tab.to}
           end={'end' in tab ? tab.end : false}
           className={({ isActive }) =>
-            `rounded-[13px] px-3.5 py-2 text-sm font-semibold transition ${
+            `px-2.5 py-2 text-[14.5px] transition ${
               isActive
-                ? 'bg-mint text-forest'
-                : 'text-sgraph hover:bg-mist hover:text-graph'
+                ? 'font-medium text-forest underline decoration-champ decoration-1 underline-offset-[10px]'
+                : 'text-sgraph hover:text-graph'
             }`
           }
         >

@@ -8,7 +8,7 @@ const FALLBACK_LOCAL = 'http://localhost:3000/api/v1'
 const FALLBACK_PRODUCTION =
   'https://zeengobackend-production-d058.up.railway.app/api/v1'
 
-function normalizeApiBase(raw: string): string {
+export function normalizeApiBase(raw: string): string {
   const t = raw.trim().replace(/\/$/, '')
   if (!t) return ''
   if (/\/api\/v1$/i.test(t)) return t

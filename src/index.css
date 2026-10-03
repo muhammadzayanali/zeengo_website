@@ -5,21 +5,24 @@
   --color-emer: #1f6b4f;
   --color-fresh: #3e8e68;
   --color-mint: #ddede5;
-  --color-mist: #f3f8f5;
-  --color-ivory: #faf9f5;
-  --color-paper: #ffffff;
-  --color-graph: #17201c;
-  --color-sgraph: #5f6964;
-  --color-bord: #e5eae7;
+  --color-mist: #f1ebe1;
+  --color-ivory: #f3eee4;
+  --color-paper: #fffdf8;
+  --color-graph: #1a1914;
+  --color-sgraph: #6a655c;
+  --color-bord: #e2d9cc;
   --color-champ: #c7a96b;
   --font-sans: 'IBM Plex Sans Arabic', 'SF Pro Text', -apple-system,
     BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --radius-btn: 16px;
-  --radius-card: 20px;
-  --radius-tile: 18px;
-  --radius-chip: 11px;
-  --shadow-card: 0 2px 10px rgba(18, 55, 42, 0.06);
-  --shadow-lift: 0 10px 30px rgba(18, 55, 42, 0.1);
+  --font-display: 'Fraunces', 'IBM Plex Sans Arabic', Georgia, 'Times New Roman',
+    serif;
+  --radius-btn: 14px;
+  --radius-card: 14px;
+  --radius-tile: 12px;
+  --radius-chip: 999px;
+  --shadow-card: 0 1px 2px rgba(26, 25, 20, 0.04),
+    0 10px 28px rgba(26, 25, 20, 0.05);
+  --shadow-lift: 0 14px 40px rgba(26, 25, 20, 0.1);
 }
 
 @layer base {
@@ -47,6 +50,22 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  body::before {
+    content: '';
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.42;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
   button,
   a {
     font: inherit;
@@ -65,6 +84,29 @@
 }
 
 @layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
+  }
+
+  html[lang='ar'] .font-display {
+    font-family: var(--font-sans);
+    letter-spacing: 0;
+  }
+
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-champ) 18%,
+      var(--color-champ) 82%,
+      transparent
+    );
+    opacity: 0.55;
+  }
+
   .scrollbar-none {
     scrollbar-width: none;
   }
@@ -106,7 +148,7 @@
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;

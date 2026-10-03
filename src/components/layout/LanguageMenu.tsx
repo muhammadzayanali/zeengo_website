@@ -49,8 +49,8 @@ export function LanguageMenu({
         aria-label={t('language')}
         className={
           compact
-            ? 'inline-flex min-h-9 items-center gap-1 rounded-full border border-bord bg-paper px-3 text-xs font-bold text-forest shadow-[var(--shadow-card)]'
-            : 'inline-flex min-h-10 items-center gap-1.5 rounded-[13px] border border-bord bg-paper px-3 text-sm font-semibold text-graph shadow-[var(--shadow-card)]'
+            ? 'inline-flex min-h-9 items-center gap-1 rounded-full border border-bord bg-paper px-3 text-xs text-forest'
+            : 'inline-flex min-h-10 items-center gap-1.5 px-1 text-sm text-graph'
         }
       >
         <span aria-hidden>🌐</span>

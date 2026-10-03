@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { clientV2Api, type HomeChip, type HomeFeed } from '@/shared/api/clientV2'
 import { fetchCbrFx, rubPerUnit } from '@/shared/api/cbrFx'
 import {
@@ -38,12 +39,12 @@ const SERVICE_LINKS: Record<string, string> = {
 }
 
 const FALLBACK_SERVICES: HomeChip[] = [
-  { id: 'acts', label: 'Things to do', subtitle: 'Activities' },
-  { id: 'hotels', label: 'Hotels', subtitle: 'Hotels' },
-  { id: 'cars', label: 'Cars & drivers', subtitle: 'Drivers + vehicle classes' },
-  { id: 'guides', label: 'Guide service', subtitle: 'Guides' },
-  { id: 'money', label: 'Money now', subtitle: 'Live ₽ rates & paying' },
-  { id: 'now', label: 'Happening now', subtitle: 'Around you in Moscow' },
+  { id: 'acts', label: 'Things to do', subtitle: 'Tickets & days out' },
+  { id: 'hotels', label: 'Hotels', subtitle: 'Rooms in the city' },
+  { id: 'cars', label: 'Cars & drivers', subtitle: 'Airport & hourly' },
+  { id: 'guides', label: 'Guide service', subtitle: 'Arabic-speaking' },
+  { id: 'money', label: 'Money now', subtitle: 'Live ₽ rates' },
+  { id: 'now', label: 'Happening now', subtitle: 'Around you' },
 ]
 
 function moscowClock() {
@@ -59,7 +60,77 @@ function moscowClock() {
   }
 }
 
-function ServiceCard({
+function ServiceGlyph({ id }: { id: string }) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.6,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true as const,
+  }
+  const key = id.toLowerCase()
+  if (key.includes('hotel') || key.includes('stay')) {
+    return (
+      <svg {...common}>
+        <path d="M4 19V9.5L12 5l8 4.5V19" />
+        <path d="M9 19v-5h6v5" />
+      </svg>
+    )
+  }
+  if (key.includes('car') || key.includes('driver')) {
+    return (
+      <svg {...common}>
+        <path d="M4 14h16l-1.4-5.2A2 2 0 0 0 16.7 7H7.3a2 2 0 0 0-1.9 1.8L4 14Z" />
+        <circle cx="7.5" cy="16.5" r="1.5" />
+        <circle cx="16.5" cy="16.5" r="1.5" />
+      </svg>
+    )
+  }
+  if (key.includes('food') || key.includes('eat')) {
+    return (
+      <svg {...common}>
+        <path d="M7 4v8M5 4v5a2 2 0 0 0 4 0V4" />
+        <path d="M16 4c2 2 2 5 0 7v8" />
+      </svg>
+    )
+  }
+  if (key.includes('guide')) {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="8" r="3" />
+        <path d="M5.5 19c1.4-3 3.6-4.5 6.5-4.5s5.1 1.5 6.5 4.5" />
+      </svg>
+    )
+  }
+  if (key.includes('money') || key.includes('fx')) {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 7.5v9M9.4 9.4c.8-1 2.8-1.2 3.6.2.7 1.2-.1 2.2-1.8 2.5-1.8.3-2.7 1.3-2 2.5.8 1.3 2.8 1.2 3.7.1" />
+      </svg>
+    )
+  }
+  if (key.includes('now') || key.includes('around') || key.includes('live')) {
+    return (
+      <svg {...common}>
+        <path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z" />
+        <circle cx="12" cy="10" r="2.2" />
+      </svg>
+    )
+  }
+  return (
+    <svg {...common}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="m15.6 8.4-2.4 5.4-5.4 2.4 2.4-5.4Z" />
+    </svg>
+  )
+}
+
+function ServiceLink({
   id,
   label,
   subtitle,
@@ -75,28 +146,17 @@ function ServiceCard({
   return (
     <Link
       to={to}
-      className="flex min-h-[112px] flex-col items-start gap-3 rounded-[18px] border border-bord bg-paper p-4 shadow-[var(--shadow-card)] transition active:scale-[0.98] md:min-h-[122px]"
+      className="group flex min-w-[128px] flex-1 flex-col items-center gap-2.5 px-2 py-2 text-center md:min-w-0"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-[13px] bg-mint">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#1F6B4F"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          aria-hidden
-        >
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
+      <span className="flex h-12 w-12 items-center justify-center text-forest transition group-hover:text-emer">
+        <ServiceGlyph id={`${id} ${label}`} />
       </span>
       <span className="min-w-0">
-        <span className="block text-[14.5px] font-semibold tracking-[-0.15px] text-graph">
+        <span className="block text-[13.5px] font-medium text-graph">
           {label}
         </span>
         {subtitle ? (
-          <span className="mt-0.5 block text-[11.5px] leading-snug text-sgraph">
+          <span className="mt-0.5 block text-[11px] leading-snug text-sgraph">
             {subtitle}
           </span>
         ) : null}
@@ -106,6 +166,7 @@ function ServiceCard({
 }
 
 function HomeTopBar() {
+  const { t } = useTranslation()
   const time = useMemo(() => moscowClock(), [])
   const fxQ = useQuery({
     queryKey: ['cbr-fx'],
@@ -122,84 +183,66 @@ function HomeTopBar() {
     : null
 
   return (
-    <div className="mb-3 md:hidden">
+    <div className="mb-5 md:hidden">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-bold tracking-[0.22em] text-emer uppercase">
-            aLo · ZEEN
-          </p>
-          <p className="mt-1 text-[22px] font-bold tracking-[-0.35px] text-graph">
-            aLo Russia
+          <p className="text-[12px] text-emer">{t('brand')}</p>
+          <p className="font-display mt-0.5 text-[26px] font-medium text-graph">
+            {t('brandTitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             to="/around"
-            className="inline-flex min-h-9 items-center rounded-full border border-bord bg-paper px-3 text-xs font-semibold text-forest shadow-[var(--shadow-card)]"
+            className="inline-flex min-h-9 items-center rounded-full border border-bord bg-paper px-3 text-xs text-forest"
           >
             Moscow
           </Link>
           <Link
             to="/money"
-            className="inline-flex min-h-9 items-center rounded-full bg-mist px-3 text-xs font-bold text-emer"
+            className="inline-flex min-h-9 items-center rounded-full bg-mist px-3 text-xs font-medium text-emer"
           >
             {sarRate ? `1 SAR ${sarRate}₽` : '₽ FX'}
           </Link>
-          <Link
-            to="/trip"
-            className="inline-flex min-h-9 items-center rounded-full bg-emer px-3 text-xs font-bold text-white"
-          >
-            Trip
-          </Link>
         </div>
       </div>
-      <p className="mt-2 text-[12.5px] text-sgraph">
-        {time} in Moscow · Arabic-speaking desk
+      <p className="mt-2 text-[13px] text-sgraph">
+        {time} in Moscow · a desk that answers in Arabic
       </p>
     </div>
   )
 }
 
 function HomeBody({ data }: { data: HomeFeed }) {
+  const { t } = useTranslation()
   const services =
     data.services?.length > 0 ? data.services : FALLBACK_SERVICES
 
   return (
     <>
-      <section className="mb-6 md:mb-8">
-        <div className="relative md:rounded-[28px] md:border md:border-bord md:bg-gradient-to-br md:from-mist md:via-ivory md:to-[#e8f3ed] md:px-7 md:py-8 md:shadow-[var(--shadow-card)] lg:px-10 lg:py-10">
-          <div
-            className="pointer-events-none absolute -top-24 -right-16 hidden h-64 w-64 rounded-full bg-mint/50 blur-3xl md:block"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -bottom-20 left-10 hidden h-48 w-48 rounded-full bg-[#cfe6db]/40 blur-3xl md:block"
-            aria-hidden
-          />
-          <div className="relative">
-            <div className="mb-6 hidden md:block">
-              <p className="text-[12px] font-bold tracking-[0.2em] text-emer uppercase">
-                Moscow · Arabic desk
-              </p>
-              <h1 className="mt-2 max-w-2xl text-[40px] leading-[1.08] font-bold tracking-[-0.6px] text-graph lg:text-[46px]">
-                Where to today?
-              </h1>
-              <p className="mt-3 max-w-xl text-[15.5px] leading-relaxed text-sgraph">
-                Arabic-speaking guide to Moscow — stays, things to do, transfers,
-                and live rouble rates.
-              </p>
+      <section className="mb-8 md:mb-12">
+        <div className="relative">
+          <div className="mb-7 hidden md:block">
+            <p className="text-[13px] text-emer">Moscow, with someone who knows it</p>
+            <h1 className="font-display mt-2 max-w-3xl text-[46px] leading-[1.08] font-medium text-graph lg:text-[56px]">
+              {t('home.whereToday')}
+            </h1>
+            <div className="mt-4 max-w-[140px]">
+              <div className="hairline" />
             </div>
-            <AloBookingModule quickChips={data.quickChips} />
+            <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-sgraph">
+              {t('home.heroBody')}
+            </p>
           </div>
+          <AloBookingModule quickChips={data.quickChips} />
         </div>
       </section>
 
       <MoneyTodayStrip />
 
-      <SectionHeader title="Services" eyebrow="01" />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+      <div className="-mx-4 mt-2 flex gap-1 overflow-x-auto border-y border-bord/70 px-2 py-3 scrollbar-none md:mx-0 md:flex-wrap md:justify-between md:overflow-visible md:px-0">
         {services.map((s) => (
-          <ServiceCard
+          <ServiceLink
             key={s.id}
             id={s.id}
             label={s.label}
@@ -211,11 +254,10 @@ function HomeBody({ data }: { data: HomeFeed }) {
       {(data.featuredHotels?.length ?? 0) > 0 ? (
         <>
           <SectionHeader
-            title="Hotels"
-            eyebrow="DB"
+            title={t('home.hotels')}
             action={
-              <Link to="/stays" className="text-xs font-bold text-emer">
-                See all {data.catalogStats?.hotels ?? ''}
+              <Link to="/stays" className="text-sm text-emer">
+                {t('seeAll')} {data.catalogStats?.hotels ?? ''}
               </Link>
             }
           />
@@ -226,7 +268,8 @@ function HomeBody({ data }: { data: HomeFeed }) {
                 to={`/places/${encodeURIComponent(String(p.id))}`}
                 title={p.title}
                 subtitle={p.area || p.subtitle}
-                badge={typeof p.badge === 'string' ? p.badge : 'Hotel'}
+                imageUrl={p.imageUrl}
+                badge={typeof p.badge === 'string' ? p.badge : undefined}
               />
             ))}
           </CardRail>
@@ -236,11 +279,10 @@ function HomeBody({ data }: { data: HomeFeed }) {
       {(data.featuredActivities?.length ?? 0) > 0 ? (
         <>
           <SectionHeader
-            title="Activities"
-            eyebrow="DB"
+            title={t('home.thingsToDo')}
             action={
-              <Link to="/acts" className="text-xs font-bold text-emer">
-                See all {data.catalogStats?.activities ?? ''}
+              <Link to="/acts" className="text-sm text-emer">
+                {t('seeAll')} {data.catalogStats?.activities ?? ''}
               </Link>
             }
           />
@@ -251,7 +293,8 @@ function HomeBody({ data }: { data: HomeFeed }) {
                 to={`/places/${encodeURIComponent(String(p.id))}`}
                 title={p.title}
                 subtitle={p.area || p.subtitle}
-                badge={typeof p.badge === 'string' ? p.badge : 'Activity'}
+                imageUrl={p.imageUrl}
+                badge={typeof p.badge === 'string' ? p.badge : undefined}
               />
             ))}
           </CardRail>
@@ -260,18 +303,27 @@ function HomeBody({ data }: { data: HomeFeed }) {
 
       {(data.suitYou?.length ?? 0) > 0 ? (
         <>
-          <SectionHeader title="What suits you today?" eyebrow="02" />
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <SectionHeader title="What suits you today?" />
+          <div className="grid grid-cols-1 gap-x-10 gap-y-1 sm:grid-cols-2">
             {data.suitYou.map((m) => (
               <Link
                 key={m.id}
                 to="/explore"
-                className="rounded-[16px] border border-bord bg-paper px-4 py-3.5 shadow-[var(--shadow-card)]"
+                className="flex items-baseline justify-between gap-4 border-b border-bord/80 py-3.5"
               >
-                <p className="font-semibold text-graph">{m.label}</p>
-                {m.subtitle ? (
-                  <p className="mt-1 text-xs text-sgraph">{m.subtitle}</p>
-                ) : null}
+                <span>
+                  <span className="font-display block text-[17px] font-medium text-graph">
+                    {m.label}
+                  </span>
+                  {m.subtitle ? (
+                    <span className="mt-0.5 block text-[12.5px] text-sgraph">
+                      {m.subtitle}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="text-champ" aria-hidden>
+                  →
+                </span>
               </Link>
             ))}
           </div>
@@ -279,11 +331,10 @@ function HomeBody({ data }: { data: HomeFeed }) {
       ) : null}
 
       <SectionHeader
-        title="Moscow right now"
-        eyebrow="03"
+        title={t('home.moscowNow')}
         action={
-          <Link to="/around" className="text-xs font-bold text-emer">
-            See all
+          <Link to="/around" className="text-sm text-emer">
+            {t('seeAll')}
           </Link>
         }
       />
@@ -304,7 +355,7 @@ function HomeBody({ data }: { data: HomeFeed }) {
         </CardRail>
       )}
 
-      <SectionHeader title="Close to the centre" eyebrow="04" />
+      <SectionHeader title={t('home.closeCentre')} />
       <CardRail>
         {(data.closeToCentre ?? []).map((p) => (
           <PlaceCard
@@ -317,7 +368,7 @@ function HomeBody({ data }: { data: HomeFeed }) {
         ))}
       </CardRail>
 
-      <SectionHeader title="First time in Russia" eyebrow="05" />
+      <SectionHeader title={t('home.firstTime')} />
       <CardRail>
         {(data.firstTime ?? []).map((p) => (
           <PlaceCard
@@ -330,7 +381,7 @@ function HomeBody({ data }: { data: HomeFeed }) {
         ))}
       </CardRail>
 
-      <SectionHeader title="Where to eat" eyebrow="06" />
+      <SectionHeader title={t('home.whereEat')} />
       <CardRail>
         {(data.food ?? []).map((p) => (
           <PlaceCard
@@ -344,7 +395,7 @@ function HomeBody({ data }: { data: HomeFeed }) {
         ))}
       </CardRail>
 
-      <SectionHeader title="With kids" eyebrow="07" />
+      <SectionHeader title={t('home.withKids')} />
       <CardRail>
         {(data.withKids ?? []).map((p) => (
           <PlaceCard

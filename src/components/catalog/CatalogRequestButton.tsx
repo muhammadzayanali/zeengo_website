@@ -150,7 +150,7 @@ export function CatalogRequestButton({
       <button
         type="button"
         onClick={request}
-        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[14px] bg-emer px-4 text-sm font-semibold text-white"
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-emer px-4 text-sm font-medium text-white"
       >
         {label ?? 'Request booking'}
       </button>
@@ -159,7 +159,7 @@ export function CatalogRequestButton({
         onClick={() =>
           openWhatsAppBook(buildWhatsAppMessage(payload, znCode))
         }
-        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[14px] border border-line bg-white px-4 text-sm font-semibold text-graph"
+        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-bord bg-paper px-4 text-sm font-medium text-graph"
       >
         <svg
           width="18"

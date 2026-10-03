@@ -7,7 +7,7 @@ import { PlacesPage } from './PlacesPage'
 export function ActsPage() {
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px]">Things to do</h1>
+      <h1 className="font-display text-[32px] font-medium">Things to do</h1>
       <p className="mt-2 max-w-2xl text-sm text-sgraph">
         Experiences and attractions from Discovery places.
       </p>
@@ -21,7 +21,7 @@ export function ActsPage() {
 export function PlanPage() {
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px]">Your plan</h1>
+      <h1 className="font-display text-[32px] font-medium">Your plan</h1>
       <p className="mt-2 text-sm text-sgraph">
         Build days the way the prototype “Plan / My trip” flow does — picks,
         transport, desk handoff.
@@ -60,7 +60,7 @@ export function SimpleHub({
 }) {
   return (
     <div>
-      <h1 className="text-[30px] font-bold tracking-[-0.4px]">{title}</h1>
+      <h1 className="font-display text-[32px] font-medium">{title}</h1>
       <p className="mt-2 max-w-2xl text-sm text-sgraph">{body}</p>
       <Link
         to="/account"

@@ -77,7 +77,7 @@ export function MoneyTodayStrip() {
   return (
     <section className="mb-6">
       <div className="mb-2.5 flex items-baseline justify-between gap-3">
-        <h2 className="text-[18px] font-bold tracking-[-0.3px] text-graph md:text-[20px]">
+        <h2 className="font-display text-[22px] font-medium text-graph md:text-[24px]">
           Money today
         </h2>
         <Link
@@ -96,7 +96,7 @@ export function MoneyTodayStrip() {
             <Link
               key={code}
               to={`/money?from=${code}`}
-              className="min-w-[112px] shrink-0 rounded-[16px] border border-bord bg-paper px-3 py-2.5 shadow-[var(--shadow-card)] transition hover:border-fresh/40 active:scale-[0.98]"
+              className="min-w-[104px] shrink-0 border-r border-bord px-3 py-1.5 last:border-r-0"
             >
               <p className="text-[10px] font-bold tracking-[0.12em] text-[#a67c3d] uppercase">
                 {meta.flag} 1 {code}
@@ -112,12 +112,10 @@ export function MoneyTodayStrip() {
         })}
         <Link
           to="/money"
-          className="flex min-w-[112px] shrink-0 flex-col justify-center rounded-[16px] bg-forest px-3 py-2.5 text-[#c6f06a] shadow-[var(--shadow-card)] transition active:scale-[0.98]"
+          className="flex min-w-[88px] shrink-0 flex-col justify-center px-3 py-1.5 text-emer"
         >
-          <p className="text-[10px] font-extrabold tracking-[0.12em] uppercase">
-            Full list
-          </p>
-          <p className="mt-1 text-[13px] font-bold">12 currencies ›</p>
+          <p className="text-[13px]">All rates</p>
+          <p className="mt-0.5 text-[12px] text-sgraph">12 currencies</p>
         </Link>
       </div>
       <p className="mt-2 text-[11px] text-sgraph">CBR · {date}</p>
