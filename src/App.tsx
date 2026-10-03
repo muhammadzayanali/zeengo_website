@@ -2,7 +2,8 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '@/components/layout/AppShell'
-import { AuthProvider } from '@/shared/auth/AuthContext'
+import { AuthProvider, useAuth } from '@/shared/auth/AuthContext'
+import { useGuestChatSocket } from '@/shared/chat/useGuestChatSocket'
 import { TripBagProvider } from '@/shared/trip/TripBag'
 import { queryClient } from '@/shared/api/queryClient'
 import { LoadingBlock } from '@/components/ui/Primitives'
@@ -45,10 +46,17 @@ function Lazy({ children }: { children: ReactNode }) {
   return <Suspense fallback={<LoadingBlock />}>{children}</Suspense>
 }
 
+function GuestRealtime() {
+  const { ready, isAuthenticated, accessToken } = useAuth()
+  useGuestChatSocket(Boolean(ready && isAuthenticated && accessToken))
+  return null
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <GuestRealtime />
         <TripBagProvider>
           <BrowserRouter>
             <Routes>

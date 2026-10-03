@@ -174,13 +174,20 @@ export function TrainsPage() {
   const people = Math.max(1, Math.min(20, Number(get('people')) || 1))
   const rawDate = get('date')
   const date = isIsoDate(rawDate) ? rawDate : ''
+  const [from, setFrom] = useState(get('from') || 'Moscow')
   const [to, setTo] = useState(get('to'))
   const [classes, setClasses] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
 
   const query = useQuery({
-    queryKey: ['trains', lang, get('to'), people],
-    queryFn: () => catalogApi.trains({ lang, to: get('to') || undefined, people }),
+    queryKey: ['trains', lang, get('from'), get('to'), people],
+    queryFn: () =>
+      catalogApi.trains({
+        lang,
+        from: get('from') || undefined,
+        to: get('to') || undefined,
+        people,
+      }),
     placeholderData: keepPreviousData,
     staleTime: 60_000,
   })
@@ -212,7 +219,10 @@ export function TrainsPage() {
   return (
     <div className="pb-8">
       <PageIntro eyebrow="aLo · ZEEN" title={t('book.trainsTitle')} body={t('book.trainsBody')} />
-      <form onSubmit={(e) => { e.preventDefault(); set({ to }) }} className="grid gap-2 rounded-[20px] border border-bord bg-paper p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-end">
+      <form onSubmit={(e) => { e.preventDefault(); set({ from, to }) }} className="grid gap-2 rounded-[20px] border border-bord bg-paper p-3 shadow-[var(--shadow-card)] sm:grid-cols-[1fr_1fr_1fr_1fr_auto] sm:items-end">
+        <Field label={t('book.fromStation')}>
+          <input className={fieldCls} value={from} placeholder="Moscow" onChange={(e) => setFrom(e.target.value)} />
+        </Field>
         <Field label={t('book.toStation')}>
           <input className={fieldCls} value={to} placeholder="Saint Petersburg, Kazan…" onChange={(e) => setTo(e.target.value)} />
         </Field>

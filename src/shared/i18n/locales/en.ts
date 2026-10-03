@@ -212,6 +212,7 @@ export const en = {
     bagsCount: 'Bags: {{n}}',
     noVehicles: 'No car fits this group',
     noVehiclesHint: 'Lower the passengers or bags, or ask ZEEN on WhatsApp.',
+    fromStation: 'From',
     toStation: 'To',
     trainClass: 'Class',
     noTrains: 'No trains match',

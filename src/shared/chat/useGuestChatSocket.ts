@@ -65,6 +65,17 @@ export function useGuestChatSocket(enabled: boolean) {
       )
     })
 
+    const refreshTrip = () => {
+      void queryClient.invalidateQueries({ queryKey: ['client-portal'] })
+      void queryClient.invalidateQueries({ queryKey: ['client', 'booking'] })
+    }
+    ns.on('booking.updated', refreshTrip)
+    ns.on('booking.created', refreshTrip)
+    ns.on('edit_request.updated', refreshTrip)
+    ns.on('edit_request.created', refreshTrip)
+    ns.on('document.uploaded', refreshTrip)
+    ns.on('notification.new', refreshTrip)
+
     return () => {
       ns.disconnect()
       if (sharedSocket === ns) sharedSocket = null

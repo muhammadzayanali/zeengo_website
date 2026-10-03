@@ -211,6 +211,7 @@ const ar: WebsiteMessages = {
     bagsCount: 'الحقائب: {{n}}',
     noVehicles: 'لا توجد سيارة تناسب هذه المجموعة',
     noVehiclesHint: 'قلّل عدد الركاب أو الحقائب، أو راسل ZEEN على واتساب.',
+    fromStation: 'من',
     toStation: 'إلى',
     trainClass: 'الدرجة',
     noTrains: 'لا توجد قطارات مطابقة',

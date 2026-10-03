@@ -212,6 +212,7 @@ const ru: WebsiteMessages = {
     bagsCount: 'Багаж: {{n}}',
     noVehicles: 'Нет подходящего автомобиля',
     noVehiclesHint: 'Уменьшите число пассажиров или багажа или напишите ZEEN в WhatsApp.',
+    fromStation: 'Откуда',
     toStation: 'Куда',
     trainClass: 'Класс',
     noTrains: 'Поезда не найдены',

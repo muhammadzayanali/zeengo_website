@@ -12,10 +12,7 @@ import {
   type ClientChatRole,
   type ChatMessage,
 } from '@/shared/chat/types'
-import {
-  getGuestChatSocket,
-  useGuestChatSocket,
-} from '@/shared/chat/useGuestChatSocket'
+import { getGuestChatSocket } from '@/shared/chat/useGuestChatSocket'
 
 function elapsedLabel(iso: string) {
   const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60_000))
@@ -66,7 +63,7 @@ export function GuestChatPanel({
   driverChatReady = false,
   onClose,
 }: Props) {
-  const { accessToken, user, isAuthenticated } = useAuth()
+  const { accessToken, user } = useAuth()
   const qc = useQueryClient()
   const [lane, setLane] = useState<ClientChatRole>('admin')
   const [text, setText] = useState('')
@@ -75,8 +72,6 @@ export function GuestChatPanel({
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastTypingEmit = useRef(0)
-
-  useGuestChatSocket(Boolean(isAuthenticated && accessToken))
 
   useEffect(() => {
     if (!driverChatReady && lane === 'driver') setLane('admin')
