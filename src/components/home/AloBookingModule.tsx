@@ -805,8 +805,10 @@ function LocationPickerBody({
  */
 export function AloBookingModule({
   quickChips = QUICK_DEFAULT,
+  tone = 'page',
 }: {
   quickChips?: string[]
+  tone?: 'page' | 'desk'
 }) {
   const navigate = useNavigate()
   const [mode, setMode] = useState<Mode>('move')
@@ -1191,24 +1193,34 @@ export function AloBookingModule({
     </>
   )
 
+  const desk = tone === 'desk'
+
   return (
-    <section className="space-y-4 md:space-y-6">
+    <section className={desk ? 'space-y-3 md:space-y-4' : 'space-y-4 md:space-y-6'}>
       <form onSubmit={onSearch} className="flex items-center gap-2.5 md:gap-3">
-        <label className="flex min-h-[52px] flex-1 items-center gap-3 rounded-full border border-bord bg-paper px-5 transition focus-within:border-champ/70 md:min-h-[56px] md:px-6">
+        <label
+          className={`flex min-h-[52px] flex-1 items-center gap-3 bg-paper px-5 transition focus-within:border-champ/70 md:min-h-[56px] md:px-6 ${
+            desk
+              ? 'rounded-[4px] border border-bord/80'
+              : 'rounded-full border border-bord'
+          }`}
+        >
           <span className="text-emer">
             <Icon name="search" className="h-[18px] w-[18px] md:h-5 md:w-5" />
           </span>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ask aLo or search a place..."
+            placeholder="Ask the desk, or name a place…"
             className="w-full border-0 bg-transparent text-[14.5px] text-graph outline-none placeholder:text-sgraph md:text-[16px]"
             aria-label="Search"
           />
         </label>
         <Link
           to="/trip"
-          className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-bord bg-paper text-forest transition hover:border-champ/70 md:h-[56px] md:w-[56px]"
+          className={`flex h-[52px] w-[52px] shrink-0 items-center justify-center border border-bord bg-paper text-forest transition hover:border-champ/70 md:h-[56px] md:w-[56px] ${
+            desk ? 'rounded-[4px]' : 'rounded-full'
+          }`}
           aria-label="Ask the desk"
           title="Arabic-speaking desk"
         >
@@ -1243,25 +1255,31 @@ export function AloBookingModule({
         ))}
       </div>
 
-      <div className="flex justify-between gap-1 pt-0.5 md:hidden">
-        {CATEGORIES.map((c) => (
-          <Link
-            key={c.id}
-            to={c.to}
-            className="group flex w-[64px] flex-col items-center gap-1.5 md:w-auto md:min-w-[88px]"
-          >
-            <span className="flex h-[48px] w-[48px] items-center justify-center text-forest transition group-hover:text-emer md:h-[52px] md:w-[52px]">
-              <Icon name={c.icon} className="h-[22px] w-[22px]" />
-            </span>
-            <span className="text-[11.5px] font-medium text-graph md:text-[12.5px]">
-              {c.label}
-            </span>
-          </Link>
-        ))}
-      </div>
+      {desk ? null : (
+        <div className="flex justify-between gap-1 pt-0.5 md:hidden">
+          {CATEGORIES.map((c) => (
+            <Link
+              key={c.id}
+              to={c.to}
+              className="group flex w-[64px] flex-col items-center gap-1.5 md:w-auto md:min-w-[88px]"
+            >
+              <span className="flex h-[48px] w-[48px] items-center justify-center text-forest transition group-hover:text-emer md:h-[52px] md:w-[52px]">
+                <Icon name={c.icon} className="h-[22px] w-[22px]" />
+              </span>
+              <span className="text-[11.5px] font-medium text-graph md:text-[12.5px]">
+                {c.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Mobile booking card */}
-      <div className="relative overflow-hidden rounded-[16px] border border-bord bg-paper md:hidden">
+      <div
+        className={`relative overflow-hidden border border-bord bg-paper md:hidden ${
+          desk ? 'rounded-[4px]' : 'rounded-[16px]'
+        }`}
+      >
         <div className="border-b border-bord p-1.5">
           <ModeTabs mode={mode} setMode={setMode} />
         </div>
@@ -1289,7 +1307,11 @@ export function AloBookingModule({
       </div>
 
       {/* Desktop booking bar — dropdown portals under the field (no layout stretch). */}
-      <div className="relative hidden overflow-hidden rounded-[16px] border border-bord bg-paper md:block">
+      <div
+        className={`relative hidden overflow-hidden border border-bord bg-paper md:block ${
+          desk ? 'rounded-[4px]' : 'rounded-[16px]'
+        }`}
+      >
         <div className="flex items-center justify-between gap-4 border-b border-bord px-4 py-3">
           <ModeTabs mode={mode} setMode={setMode} />
           <p className="hidden text-[13px] text-sgraph lg:block">

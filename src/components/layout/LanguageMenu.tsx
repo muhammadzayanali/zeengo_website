@@ -9,9 +9,11 @@ import { useWebsiteLocale } from '@/shared/i18n/useWebsiteLocale'
 export function LanguageMenu({
   align = 'end',
   compact = false,
+  tone = 'ink',
 }: {
   align?: 'start' | 'end'
   compact?: boolean
+  tone?: 'ink' | 'ivory'
 }) {
   const { t } = useTranslation()
   const { locale, localeShort, setLocale } = useWebsiteLocale()
@@ -49,8 +51,14 @@ export function LanguageMenu({
         aria-label={t('language')}
         className={
           compact
-            ? 'inline-flex min-h-9 items-center gap-1 rounded-full border border-bord bg-paper px-3 text-xs text-forest'
-            : 'inline-flex min-h-10 items-center gap-1.5 px-1 text-sm text-graph'
+            ? `inline-flex min-h-9 items-center gap-1 rounded-full border px-3 text-xs ${
+                tone === 'ivory'
+                  ? 'border-white/30 bg-white/10 text-[#F3EEE4]'
+                  : 'border-bord bg-paper text-forest'
+              }`
+            : `inline-flex min-h-10 items-center gap-1.5 px-1 text-sm ${
+                tone === 'ivory' ? 'text-[#F3EEE4]' : 'text-graph'
+              }`
         }
       >
         <span aria-hidden>🌐</span>

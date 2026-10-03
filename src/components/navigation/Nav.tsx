@@ -103,8 +103,13 @@ export function BottomNav() {
   )
 }
 
-export function DesktopNav() {
+export function DesktopNav({
+  tone = 'ink',
+}: {
+  tone?: 'ink' | 'ivory'
+}) {
   const { t } = useTranslation()
+  const light = tone === 'ivory'
   return (
     <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
       {primaryTabDefs.map((tab) => (
@@ -114,9 +119,13 @@ export function DesktopNav() {
           end={'end' in tab ? tab.end : false}
           className={({ isActive }) =>
             `px-2.5 py-2 text-[14.5px] transition ${
-              isActive
-                ? 'font-medium text-forest underline decoration-champ decoration-1 underline-offset-[10px]'
-                : 'text-sgraph hover:text-graph'
+              light
+                ? isActive
+                  ? 'font-medium text-[#F3EEE4] underline decoration-[#C7A96B] decoration-1 underline-offset-[10px]'
+                  : 'text-[#F3EEE4]/72 hover:text-[#F3EEE4]'
+                : isActive
+                  ? 'font-medium text-forest underline decoration-champ decoration-1 underline-offset-[10px]'
+                  : 'text-sgraph hover:text-graph'
             }`
           }
         >

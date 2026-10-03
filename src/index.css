@@ -12,8 +12,9 @@
   --color-sgraph: #6a655c;
   --color-bord: #e2d9cc;
   --color-champ: #c7a96b;
-  --font-sans: 'IBM Plex Sans Arabic', 'SF Pro Text', -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', 'SF Pro Text',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
   --font-display: 'Fraunces', 'IBM Plex Sans Arabic', Georgia, 'Times New Roman',
     serif;
   --radius-btn: 14px;
@@ -48,6 +49,11 @@
     background: var(--color-ivory);
     color: var(--color-graph);
     -webkit-font-smoothing: antialiased;
+    font-kerning: normal;
+  }
+
+  html[lang='ar'] body {
+    font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
   }
 
   body::before {
